@@ -1,0 +1,1 @@
+Manchu morphological analyzer
