@@ -1,22 +1,12 @@
-pub struct SplitedWord {
-    base: String,
-    suffix: Option<String>,
-}
+mod splited_word;
 
-impl SplitedWord {
-    pub fn new(base: String, suffix: Option<String>) -> Self {
-        Self { base, suffix }
-    }
+use std::error::Error;
 
-    pub fn base(&self) -> &str {
-        &self.base
-    }
+use serde::Deserialize;
+use splited_word::SplitedWord;
 
-    pub fn suffix(&self) -> Option<&str> {
-        self.suffix.as_deref()
-    }
-}
-
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "snake_case")]
 enum SuffixRole {
     Functional,
     Derivational,
@@ -24,43 +14,50 @@ enum SuffixRole {
     Denominaladjective,
 }
 
-enum POS {
+/// part of speech which suffix attaches to
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "snake_case")]
+enum PartOfSpeech {
     Noun,
     Verb,
 }
 
+#[derive(Debug, Deserialize)]
 struct Suffix {
+    /// basic form of suffix
     form: String,
+    /// role of suffix
+    ///
+    /// For example, the role of "mbi" is "functional"
+    /// and the role of "bu" is "derivational".
     role: SuffixRole,
-    part_of_speech: POS,
+    /// part of speech which suffix attaches to
+    #[serde(rename = "left_pos")]
+    part_of_speech: PartOfSpeech,
 }
 
 impl Suffix {
-    pub fn new(form: String, role: SuffixRole, part_of_speech: POS) -> Self {
-        Self { form, role, part_of_speech }
+    pub fn new(form: String, role: SuffixRole, part_of_speech: PartOfSpeech) -> Self {
+        Self {
+            form,
+            role,
+            part_of_speech,
+        }
     }
 }
 
-// TODO: 読み込んだCSVを構造体に流し込む
-fn read_suffix_csv() -> Result<Vec<String>, String> {
-    let rdr = csv::ReaderBuilder::new()
-        .has_headers(false)
-        .from_path("resources/suffix.csv");
+fn read_suffix_csv() -> Result<Vec<Suffix>, Box<dyn Error>> {
+    let rdr = csv::Reader::from_path("resources/suffix.csv");
     match rdr {
         Ok(mut rdr) => {
             let mut suffixes = Vec::new();
-            for result in rdr.records() {
-                match result {
-                    Ok(record) => {
-                        let suffix = record.get(0).unwrap().to_string();
-                        suffixes.push(suffix);
-                    }
-                    Err(_) => return Err("Error reading suffix.csv".to_string()),
-                }
+            for result in rdr.deserialize() {
+                let suffix: Suffix = result?;
+                suffixes.push(suffix);
             }
             Ok(suffixes)
         }
-        Err(err) => Err(err.to_string()),
+        Err(err) => Err(err.into()),
     }
 }
 
@@ -69,25 +66,26 @@ fn read_suffix_csv() -> Result<Vec<String>, String> {
 /// Returns Err if the word is empty or consists entirely of whitespace.
 ///
 /// * `word` - A word to split.
-pub fn split_word_into_suffix_base(word: &str) -> Result<SplitedWord, String> {
+pub fn split_word_into_suffix_base(word: &str) -> Result<SplitedWord, Box<dyn Error>> {
     let suffixes = read_suffix_csv();
     let suffixes = match suffixes {
         Ok(suffixes) => suffixes,
         Err(err) => {
             println!("Error reading suffix.csv: {}", err);
-            return Err(err);
+            return Err(err.into());
         }
     };
     if word.is_empty() {
-        return Err("Empty string".to_string());
+        return Err("Empty string".into());
     }
     if word.chars().all(|c| c.is_whitespace()) {
-        return Err("Whitespace string".to_string());
+        return Err("Whitespace string".into());
     }
     for suffix in suffixes.iter() {
-        if word.ends_with(suffix) {
-            let base = word[..word.len() - suffix.len()].to_string();
-            let suffix = suffix.to_string();
+        let suffix_form = suffix.form.as_str();
+        if word.ends_with(suffix_form) {
+            let base = word[..word.len() - suffix_form.len()].to_string();
+            let suffix = suffix_form.to_string();
             let splited_word = SplitedWord::new(base, Some(suffix));
             return Ok(splited_word);
         }
