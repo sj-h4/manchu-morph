@@ -17,11 +17,67 @@ impl SplitedWord {
     }
 }
 
+enum SuffixRole {
+    Functional,
+    Derivational,
+    Deverbal,
+    Denominaladjective,
+}
+
+enum POS {
+    Noun,
+    Verb,
+}
+
+struct Suffix {
+    form: String,
+    role: SuffixRole,
+    part_of_speech: POS,
+}
+
+impl Suffix {
+    pub fn new(form: String, role: SuffixRole, part_of_speech: POS) -> Self {
+        Self { form, role, part_of_speech }
+    }
+}
+
+// TODO: 読み込んだCSVを構造体に流し込む
+fn read_suffix_csv() -> Result<Vec<String>, String> {
+    let rdr = csv::ReaderBuilder::new()
+        .has_headers(false)
+        .from_path("resources/suffix.csv");
+    match rdr {
+        Ok(mut rdr) => {
+            let mut suffixes = Vec::new();
+            for result in rdr.records() {
+                match result {
+                    Ok(record) => {
+                        let suffix = record.get(0).unwrap().to_string();
+                        suffixes.push(suffix);
+                    }
+                    Err(_) => return Err("Error reading suffix.csv".to_string()),
+                }
+            }
+            Ok(suffixes)
+        }
+        Err(err) => Err(err.to_string()),
+    }
+}
+
 /// Spilt a word into a suffix and its base.
 ///
 /// Returns Err if the word is empty or consists entirely of whitespace.
+///
+/// * `word` - A word to split.
 pub fn split_word_into_suffix_base(word: &str) -> Result<SplitedWord, String> {
-    let suffixes = ["ing", "ed", "s", "ly"];
+    let suffixes = read_suffix_csv();
+    let suffixes = match suffixes {
+        Ok(suffixes) => suffixes,
+        Err(err) => {
+            println!("Error reading suffix.csv: {}", err);
+            return Err(err);
+        }
+    };
     if word.is_empty() {
         return Err("Empty string".to_string());
     }
@@ -45,10 +101,10 @@ mod tests {
 
     #[test]
     fn it_works() {
-        let valid_word = split_word_into_suffix_base("testly");
+        let valid_word = split_word_into_suffix_base("tuwabumbi");
 
-        let expected_base = "test";
-        let expected_suffix = "ly";
+        let expected_base = "tuwabu";
+        let expected_suffix = "mbi";
 
         match valid_word {
             Ok(splited_word) => {
