@@ -1,11 +1,9 @@
-mod splited_word;
-
+use core::panic;
 use std::error::Error;
 
 use serde::Deserialize;
-use splited_word::SplitedWord;
 
-#[derive(Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize)]
 #[serde(rename_all = "snake_case")]
 enum SuffixRole {
     Functional,
@@ -15,14 +13,14 @@ enum SuffixRole {
 }
 
 /// part of speech which suffix attaches to
-#[derive(Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize)]
 #[serde(rename_all = "snake_case")]
 enum PartOfSpeech {
     Noun,
     Verb,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize)]
 struct Suffix {
     /// basic form of suffix
     form: String,
@@ -46,18 +44,48 @@ impl Suffix {
     }
 }
 
-fn read_suffix_csv() -> Result<Vec<Suffix>, Box<dyn Error>> {
+pub struct SplitedWord {
+    base: String,
+    suffix: Option<Suffix>,
+}
+
+impl SplitedWord {
+    pub fn new(base: String, suffix: Option<Suffix>) -> Self {
+        Self { base, suffix }
+    }
+
+    pub fn base(&self) -> &str {
+        &self.base
+    }
+
+    pub fn suffix(&self) -> Option<&str> {
+        self.suffix.as_deref()
+    }
+}
+
+pub struct FullySplitedWord {
+    root: String,
+    suffixes: Option<Vec<Suffix>>,
+}
+
+fn read_suffix_csv() ->Vec<Suffix> {
     let rdr = csv::Reader::from_path("resources/suffix.csv");
     match rdr {
         Ok(mut rdr) => {
             let mut suffixes = Vec::new();
             for result in rdr.deserialize() {
-                let suffix: Suffix = result?;
-                suffixes.push(suffix);
+                if let Ok(result) = result {
+                    let suffix: Suffix = result;
+                    suffixes.push(suffix);
+                } else {
+                    panic!("Validation Error")
+                }
             }
-            Ok(suffixes)
+            suffixes
         }
-        Err(err) => Err(err.into()),
+        Err(err) =>{
+            panic!("Error reading suffix csv")
+        }
     }
 }
 
@@ -68,13 +96,6 @@ fn read_suffix_csv() -> Result<Vec<Suffix>, Box<dyn Error>> {
 /// * `word` - A word to split.
 pub fn split_word_into_suffix_base(word: &str) -> Result<SplitedWord, Box<dyn Error>> {
     let suffixes = read_suffix_csv();
-    let suffixes = match suffixes {
-        Ok(suffixes) => suffixes,
-        Err(err) => {
-            println!("Error reading suffix.csv: {}", err);
-            return Err(err.into());
-        }
-    };
     if word.is_empty() {
         return Err("Empty string".into());
     }
@@ -85,13 +106,17 @@ pub fn split_word_into_suffix_base(word: &str) -> Result<SplitedWord, Box<dyn Er
         let suffix_form = suffix.form.as_str();
         if word.ends_with(suffix_form) {
             let base = word[..word.len() - suffix_form.len()].to_string();
-            let suffix = suffix_form.to_string();
+            let suffix = suffix.clone();
             let splited_word = SplitedWord::new(base, Some(suffix));
             return Ok(splited_word);
         }
     }
     Ok(SplitedWord::new(word.to_string(), None))
 }
+
+/// Split a word into a suffix and its base recursively until the suffix is not found
+/// and return the base and suffixes.
+pub fn recurrsive_split(word: &str) -> Result<SplitedWord, Box<dyn Error>> {}
 
 #[cfg(test)]
 mod tests {
