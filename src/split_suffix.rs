@@ -64,7 +64,7 @@ fn read_suffix_csv() -> Vec<Suffix> {
             }
             suffixes
         }
-        Err(err) => {
+        Err(_) => {
             panic!("Error reading suffix csv")
         }
     }
