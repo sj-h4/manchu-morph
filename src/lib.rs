@@ -1,7 +1,5 @@
-mod split_suffix;
 mod lattice;
-mod tokenizer;
-
+mod split_suffix;
 #[cfg(test)]
 mod tests {
     use super::*;
