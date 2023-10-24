@@ -18,20 +18,21 @@ pub enum SuffixRole {
 pub enum PartOfSpeech {
     Noun,
     Verb,
+    Clitic,
 }
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct Suffix {
     /// basic form of suffix
-    form: String,
+    pub(crate) form: String,
     /// role of suffix
     ///
     /// For example, the role of "mbi" is "functional"
     /// and the role of "bu" is "derivational".
-    role: SuffixRole,
+    pub(crate) role: SuffixRole,
     /// part of speech which suffix attaches to
     #[serde(rename = "left_pos")]
-    part_of_speech: PartOfSpeech,
+    pub(crate) part_of_speech: PartOfSpeech,
 }
 
 pub struct SplitedWord {
