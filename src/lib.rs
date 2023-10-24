@@ -1,5 +1,5 @@
+mod lattice;
 mod split_suffix;
-
 #[cfg(test)]
 mod tests {
     use super::*;
