@@ -23,7 +23,11 @@ pub enum PartOfSpeech {
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct Suffix {
-    /// basic form of suffix
+    /// suffix
+    ///
+    /// For example, "mbi", "ha" or "bu".
+    pub(crate) suffix: String,
+    /// form of suffix
     pub(crate) form: String,
     /// role of suffix
     ///
