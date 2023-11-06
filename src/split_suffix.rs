@@ -35,7 +35,7 @@ pub struct Suffix {
     pub(crate) part_of_speech: PartOfSpeech,
 }
 
-pub struct SplitedWord {
+pub struct SplitWord {
     base: String,
     /// suffixes of the word
     ///
@@ -44,7 +44,7 @@ pub struct SplitedWord {
     suffixes: Option<Vec<Suffix>>,
 }
 
-impl SplitedWord {
+impl SplitWord {
     pub fn new(base: String, suffixes: Option<Vec<Suffix>>) -> Self {
         Self { base, suffixes }
     }
@@ -76,7 +76,7 @@ fn read_suffix_csv() -> Vec<Suffix> {
 /// Returns Err if the word is empty or consists entirely of whitespace.
 ///
 /// * `word` - A word to split.
-pub fn split_word_into_suffix_base(word: &str) -> Result<SplitedWord, Box<dyn Error>> {
+pub fn split_word_into_suffix_base(word: &str) -> Result<SplitWord, Box<dyn Error>> {
     let suffixes = read_suffix_csv();
     if word.is_empty() {
         return Err("Empty string".into());
@@ -90,33 +90,33 @@ pub fn split_word_into_suffix_base(word: &str) -> Result<SplitedWord, Box<dyn Er
             let base = word[..word.len() - suffix_form.len()].to_string();
             let suffix = suffix.clone();
             let suffixes = vec![suffix];
-            let splited_word = SplitedWord::new(base, Some(suffixes));
+            let splited_word = SplitWord::new(base, Some(suffixes));
             return Ok(splited_word);
         }
     }
-    Ok(SplitedWord::new(word.to_string(), None))
+    Ok(SplitWord::new(word.to_string(), None))
 }
 
 /// Split a word into a suffix and its base recursively until the suffix is not found
 /// and return the base and suffixes.
 ///
 /// * `word` - A word to split.
-pub fn recurrsive_split(
+pub fn recursive_split(
     word: &str,
     mut suffixes: Vec<Suffix>,
-) -> Result<SplitedWord, Box<dyn Error>> {
-    let splited_word = split_word_into_suffix_base(word);
-    match splited_word {
-        Ok(splited_word) => {
-            if let Some(suffix) = splited_word.suffixes {
-                let base = splited_word.base;
+) -> Result<SplitWord, Box<dyn Error>> {
+    let split_word_result: Result<SplitWord, Box<dyn Error>> = split_word_into_suffix_base(word);
+    match split_word_result {
+        Ok(split_word) => {
+            if let Some(suffix) = split_word.suffixes {
+                let base = split_word.base;
                 suffixes.extend(suffix);
-                let splited_word = recurrsive_split(&base, suffixes)?;
-                let splited_word = SplitedWord::new(splited_word.base, splited_word.suffixes);
-                Ok(splited_word)
+                let split_word = recursive_split(&base, suffixes)?;
+                let split_word = SplitWord::new(split_word.base, split_word.suffixes);
+                Ok(split_word)
             } else {
-                let splited_word = SplitedWord::new(splited_word.base, Some(suffixes));
-                Ok(splited_word)
+                let split_word = SplitWord::new(split_word.base, Some(suffixes));
+                Ok(split_word)
             }
         }
         Err(err) => Err(err),
@@ -135,9 +135,9 @@ mod tests {
         let expected_suffix = "mbi";
 
         match valid_word {
-            Ok(splited_word) => {
-                let suffix = splited_word.suffixes.unwrap();
-                assert_eq!(splited_word.base, expected_base);
+            Ok(split_word) => {
+                let suffix = split_word.suffixes.unwrap();
+                assert_eq!(split_word.base, expected_base);
                 assert_eq!(suffix[0].form, expected_suffix);
             }
             Err(_) => assert!(false),
@@ -152,16 +152,16 @@ mod tests {
 
     #[test]
     fn it_works_recursively() {
-        let valid_word = recurrsive_split("tuwabumbi", vec![]);
+        let valid_word = recursive_split("tuwabumbi", vec![]);
 
         let expected_base = "tuwa";
         let expected_suffix1 = "mbi";
         let expected_suffix2 = "bu";
 
         match valid_word {
-            Ok(splited_word) => {
-                let suffix = splited_word.suffixes.unwrap();
-                assert_eq!(splited_word.base, expected_base);
+            Ok(split_word) => {
+                let suffix = split_word.suffixes.unwrap();
+                assert_eq!(split_word.base, expected_base);
                 assert_eq!(suffix.len(), 2);
                 assert_eq!(suffix[0].form, expected_suffix1);
                 assert_eq!(suffix[1].form, expected_suffix2);
@@ -169,10 +169,10 @@ mod tests {
             Err(_) => assert!(false),
         }
 
-        let whitespace = recurrsive_split("   ", vec![]);
+        let whitespace = recursive_split("   ", vec![]);
         assert!(whitespace.is_err());
 
-        let empty = recurrsive_split("", vec![]);
+        let empty = recursive_split("", vec![]);
         assert!(empty.is_err());
     }
 }
