@@ -48,27 +48,6 @@ pub struct SplitWord {
     suffixes: Option<Vec<Suffix>>,
 }
 
-fn read_suffix_csv() -> Vec<Suffix> {
-    let rdr = csv::Reader::from_path("resources/suffix.csv");
-    match rdr {
-        Ok(mut rdr) => {
-            let mut suffixes = Vec::new();
-            for result in rdr.deserialize() {
-                if let Ok(result) = result {
-                    let suffix: Suffix = result;
-                    suffixes.push(suffix);
-                } else {
-                    panic!("Validation Error")
-                }
-            }
-            suffixes
-        }
-        Err(_) => {
-            panic!("Error reading suffix csv")
-        }
-    }
-}
-
 /// Spilt a word into a suffix and its base.
 ///
 /// Returns Err if the word is empty or consists entirely of whitespace.
@@ -127,6 +106,27 @@ pub fn recursive_split(word: &str, mut suffixes: Vec<Suffix>) -> Result<SplitWor
             }
         }
         Err(err) => Err(err),
+    }
+}
+
+fn read_suffix_csv() -> Vec<Suffix> {
+    let rdr = csv::Reader::from_path("resources/suffix.csv");
+    match rdr {
+        Ok(mut rdr) => {
+            let mut suffixes = Vec::new();
+            for result in rdr.deserialize() {
+                if let Ok(result) = result {
+                    let suffix: Suffix = result;
+                    suffixes.push(suffix);
+                } else {
+                    panic!("Validation Error")
+                }
+            }
+            suffixes
+        }
+        Err(_) => {
+            panic!("Error reading suffix csv")
+        }
     }
 }
 

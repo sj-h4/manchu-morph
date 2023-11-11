@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use crate::split_suffix::{PartOfSpeech, Suffix};
 
 #[derive(Clone, Debug)]
@@ -68,6 +70,19 @@ impl Lattice {
                 }
             }
         }
+    }
+}
+
+impl FromStr for Lattice {
+    type Err = String;
+    /// create a lattice from a sentence
+    ///
+    /// If a clitic is conjugated, the clitic is indexed as a word.
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        let lattice = Lattice {
+            lattice: vec![vec![]],
+        };
+        Ok(lattice)
     }
 }
 

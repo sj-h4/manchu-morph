@@ -1,4 +1,6 @@
+mod function_word;
 mod lattice;
+mod split_clitic;
 mod split_suffix;
 #[cfg(test)]
 mod tests {
