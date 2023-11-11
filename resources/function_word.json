@@ -1,0 +1,48 @@
+[
+	{
+		"entry": "i",
+		"type": "clitic",
+		"detail": [
+			"genitive",
+			"nominative"
+		]
+	},
+	{
+		"entry": "ni",
+		"type": "clitic",
+		"detail": [
+			"genitive"
+		]
+	},
+	{
+		"entry": "be",
+		"type": "clitic",
+		"detail": [
+			"accusative",
+			"nominative"
+		]
+	},
+	{
+		"entry": "de",
+		"type": "clitic",
+		"detail": [
+			"dative-locative",
+			"genitive"
+		]
+	},
+	{
+		"entry": "ci",
+		"type": "clitic",
+		"detail": [
+			"ablative",
+			"genitive"
+		]
+	},
+	{
+		"entry": "deri",
+		"type": "clitic",
+		"detail": [
+			"prolative"
+		]
+	}
+]
