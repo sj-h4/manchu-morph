@@ -23,16 +23,20 @@ pub enum PartOfSpeech {
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct Suffix {
-    /// basic form of suffix
-    pub(crate) form: String,
+    /// suffix
+    ///
+    /// For example, "mbi", "ha" or "bu".
+    pub suffix: String,
+    /// form of suffix
+    pub form: String,
     /// role of suffix
     ///
     /// For example, the role of "mbi" is "functional"
     /// and the role of "bu" is "derivational".
-    pub(crate) role: SuffixRole,
+    pub role: SuffixRole,
     /// part of speech which suffix attaches to
     #[serde(rename = "left_pos")]
-    pub(crate) part_of_speech: PartOfSpeech,
+    pub part_of_speech: PartOfSpeech,
 }
 
 pub struct SplitWord {
@@ -42,33 +46,6 @@ pub struct SplitWord {
     /// The order of suffixes is from the right to the left.
     /// For example, the suffixes of "tuwabumbi" are `vec!["mbi", "bu"]`.
     suffixes: Option<Vec<Suffix>>,
-}
-
-impl SplitWord {
-    pub fn new(base: String, suffixes: Option<Vec<Suffix>>) -> Self {
-        Self { base, suffixes }
-    }
-}
-
-fn read_suffix_csv() -> Vec<Suffix> {
-    let rdr = csv::Reader::from_path("resources/suffix.csv");
-    match rdr {
-        Ok(mut rdr) => {
-            let mut suffixes = Vec::new();
-            for result in rdr.deserialize() {
-                if let Ok(result) = result {
-                    let suffix: Suffix = result;
-                    suffixes.push(suffix);
-                } else {
-                    panic!("Validation Error")
-                }
-            }
-            suffixes
-        }
-        Err(_) => {
-            panic!("Error reading suffix csv")
-        }
-    }
 }
 
 /// Spilt a word into a suffix and its base.
@@ -90,21 +67,24 @@ pub fn split_word_into_suffix_base(word: &str) -> Result<SplitWord, Box<dyn Erro
             let base = word[..word.len() - suffix_form.len()].to_string();
             let suffix = suffix.clone();
             let suffixes = vec![suffix];
-            let splited_word = SplitWord::new(base, Some(suffixes));
+            let splited_word = SplitWord {
+                base,
+                suffixes: Some(suffixes),
+            };
             return Ok(splited_word);
         }
     }
-    Ok(SplitWord::new(word.to_string(), None))
+    Ok(SplitWord {
+        base: word.to_string(),
+        suffixes: None,
+    })
 }
 
 /// Split a word into a suffix and its base recursively until the suffix is not found
 /// and return the base and suffixes.
 ///
 /// * `word` - A word to split.
-pub fn recursive_split(
-    word: &str,
-    mut suffixes: Vec<Suffix>,
-) -> Result<SplitWord, Box<dyn Error>> {
+pub fn recursive_split(word: &str, mut suffixes: Vec<Suffix>) -> Result<SplitWord, Box<dyn Error>> {
     let split_word_result: Result<SplitWord, Box<dyn Error>> = split_word_into_suffix_base(word);
     match split_word_result {
         Ok(split_word) => {
@@ -112,14 +92,41 @@ pub fn recursive_split(
                 let base = split_word.base;
                 suffixes.extend(suffix);
                 let split_word = recursive_split(&base, suffixes)?;
-                let split_word = SplitWord::new(split_word.base, split_word.suffixes);
+                let split_word = SplitWord {
+                    base: split_word.base,
+                    suffixes: split_word.suffixes,
+                };
                 Ok(split_word)
             } else {
-                let split_word = SplitWord::new(split_word.base, Some(suffixes));
+                let split_word = SplitWord {
+                    base: split_word.base,
+                    suffixes: Some(suffixes),
+                };
                 Ok(split_word)
             }
         }
         Err(err) => Err(err),
+    }
+}
+
+fn read_suffix_csv() -> Vec<Suffix> {
+    let rdr = csv::Reader::from_path("resources/suffix.csv");
+    match rdr {
+        Ok(mut rdr) => {
+            let mut suffixes = Vec::new();
+            for result in rdr.deserialize() {
+                if let Ok(result) = result {
+                    let suffix: Suffix = result;
+                    suffixes.push(suffix);
+                } else {
+                    panic!("Validation Error")
+                }
+            }
+            suffixes
+        }
+        Err(_) => {
+            panic!("Error reading suffix csv")
+        }
     }
 }
 

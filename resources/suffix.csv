@@ -1,12 +1,48 @@
-form,type,role,left_pos
-mbi,suffix,functional,verb
-fi,suffix,functional,verb
-re,suffix,functional,verb
-ha,suffix,functional,verb
-he,suffix,functional,verb
-ho,suffix,functional,verb
+suffix,form,type,role,left_pos
+mbi,imperfective finite,suffix,functional,verb
+habi,perfective finite,suffix,functional,verb
+hebi,perfective finite,suffix,functional,verb
+hobi,perfective finite,suffix,functional,verb
+kabi,perfective finite,suffix,functional,verb
+kebi,perfective finite,suffix,functional,verb
+kobi,perfective finite,suffix,functional,verb
+hakvbi,negative perfective finite,suffix,functional,verb
+hekvbi,negative perfective finite,suffix,functional,verb
+hokvbi,negative perfective finite,suffix,functional,verb
+ha,perfective participle,suffix,functional,verb
+he,perfective participle,suffix,functional,verb
+ho,perfective participle,suffix,functional,verb
+ka,perfective participle,suffix,functional,verb
+ke,perfective participle,suffix,functional,verb
+ko,perfective participle,suffix,functional,verb
+ra,prospective finite,suffix,functional,verb
+re,prospective finite,suffix,functional,verb
+ro,prospective finite,suffix,functional,verb
+ki,desiderative finite,suffix,functional,verb
+kini,optative finite,suffix,functional,verb
+cina,optative finite,suffix,functional,verb
+mbihe,perfective processive participle,suffix,functional,verb
+me,imperfective coverb,suffix,functional,verb
+fi,perfective converb,suffix,functional,verb
+pi,perfective converb,suffix,functional,verb
+mpi,perfective converb,suffix,functional,verb
+hai,durative converb,suffix,functional,verb
+hei,durative converb,suffix,functional,verb
+hoi,durative converb,suffix,functional,verb
+ci,conditional converb,suffix,functional,verb
+cibe,concessive converb,suffix,functional,verb
+tala,terminative converb,suffix,functional,verb
+tele,terminative converb,suffix,functional,verb
+tolo,terminative converb,suffix,functional,verb
+nggala,prefactory converb,suffix,functional,verb
+nggale,prefactory converb,suffix,functional,verb
+nggalo,prefactory converb,suffix,functional,verb
+rahv,apprehensive converb,suffix,functional,verb
+mbime,simultaneous converb,suffix,functional,verb
+ralame,alternative converb,suffix,functional,verb
+relame,alternative converb,suffix,functional,verb
+rolame,alternative converb,suffix,functional,verb
 hekv,suffix,functional,verb
-me,suffix,functional,verb
 bu,suffix,derivational,verb
 ngge,suffix,denominaladjective,noun
 ke,suffix,deverbal,verb
