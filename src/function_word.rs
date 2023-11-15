@@ -7,7 +7,7 @@ pub struct FunctionWord {
     pub details: Vec<String>,
 }
 
-fn get_function_word_list() -> Vec<FunctionWord> {
+pub fn get_function_word_list() -> Vec<FunctionWord> {
     let rdr = csv::Reader::from_path("resources/function_word.csv");
     match rdr {
         Ok(mut rdr) => {
