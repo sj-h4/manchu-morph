@@ -1,9 +1,10 @@
 use serde::Deserialize;
+use crate::word::PartOfSpeech;
 
-#[derive(Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize)]
 pub struct FunctionWord {
     pub entry: String,
-    pub part_of_speech: String,
+    pub part_of_speech: PartOfSpeech,
     pub details: Vec<String>,
 }
 

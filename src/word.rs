@@ -1,4 +1,5 @@
 use serde::Deserialize;
+use strum_macros::EnumString;
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -17,13 +18,31 @@ pub enum Conjugation {
     Plural,
 }
 
+#[derive(Clone, Debug, EnumString)]
+pub enum Case {
+    Nominative,
+    Accusative,
+    Genitive,
+    Dative,
+    Instrumental,
+    Locative,
+    Vocative,
+}
+
+#[derive(Clone, Debug)]
+pub enum Detail {
+    Conjugation(Conjugation),
+    Cases(Vec<Case>),
+}
+
 /// part of speech which suffix attaches to
-#[derive(Clone, Copy, Debug, Deserialize)]
+#[derive(Clone, Copy, Debug, Deserialize, PartialEq)]
 #[serde(rename_all = "snake_case")]
 pub enum PartOfSpeech {
     Noun,
     Verb,
     Clitic,
+    Unknown,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -47,6 +66,9 @@ pub struct Suffix {
 
 #[derive(Clone, Debug)]
 pub struct Word {
+    /// base of the word
+    ///
+    /// If the word has no suffix, the base is the word itself.
     pub base: String,
     /// suffixes of the word
     ///
@@ -54,9 +76,10 @@ pub struct Word {
     /// For example, the suffixes of "tuwabumbi" are `vec!["mbi", "bu"]`.
     pub suffixes: Option<Vec<Suffix>>,
     pub part_of_speech: PartOfSpeech,
-    /// conjugation of the word
+    /// detail of the word
     ///
-    /// For example, the conjugation of "tuwame" is "converb" and the conjugation of "tuwahe" is "perfective".
-    pub conjugation: Option<Conjugation>,
+    /// If the word is a clitic, the detail is a list of cases
+    /// and if the word is a verb, the detail is a conjugation.
+    pub detail: Option<Detail>,
     pub emission_cost: usize,
 }

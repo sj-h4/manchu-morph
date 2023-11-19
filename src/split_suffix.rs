@@ -1,7 +1,7 @@
 use core::panic;
 use std::error::Error;
 
-use crate::word::{PartOfSpeech, Suffix, Word};
+use crate::word::{Detail, PartOfSpeech, Suffix, Word};
 
 /// Spilt a word into a suffix and its base.
 ///
@@ -22,21 +22,21 @@ pub fn split_word_into_suffix_base(word: &str) -> Result<Word, Box<dyn Error>> {
             let base = word[..word.len() - suffix_entry.len()].to_string();
             let suffix = suffix;
             let suffixes = vec![suffix.clone()];
-            let splited_word = Word {
+            let split_word = Word {
                 base,
                 suffixes: Some(suffixes),
                 part_of_speech: suffix.part_of_speech,
-                conjugation: Some(suffix.conjugation),
+                detail: Some(Detail::Conjugation(suffix.conjugation)),
                 emission_cost: 0,
             };
-            return Ok(splited_word);
+            return Ok(split_word);
         }
     }
     Ok(Word {
         base: word.to_string(),
         suffixes: None,
         part_of_speech: PartOfSpeech::Noun,
-        conjugation: None,
+        detail: None,
         emission_cost: 0,
     })
 }
@@ -57,7 +57,7 @@ pub fn recursive_split(word: &str, mut suffixes: Vec<Suffix>) -> Result<Word, Bo
                     base: split_word.base,
                     suffixes: split_word.suffixes,
                     part_of_speech: split_word.part_of_speech,
-                    conjugation: split_word.conjugation,
+                    detail: split_word.detail,
                     emission_cost: split_word.emission_cost,
                 };
                 Ok(split_word)
@@ -66,7 +66,7 @@ pub fn recursive_split(word: &str, mut suffixes: Vec<Suffix>) -> Result<Word, Bo
                     base: split_word.base,
                     suffixes: Some(suffixes),
                     part_of_speech: split_word.part_of_speech,
-                    conjugation: split_word.conjugation,
+                    detail: split_word.detail,
                     emission_cost: split_word.emission_cost,
                 };
                 Ok(split_word)
