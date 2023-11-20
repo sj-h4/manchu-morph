@@ -8,7 +8,7 @@ use crate::word::{Detail, PartOfSpeech, Suffix, Word};
 /// Returns Err if the word is empty or consists entirely of whitespace.
 ///
 /// * `word` - A word to split.
-pub fn split_word_into_suffix_base(word: &str) -> Result<Word, Box<dyn Error>> {
+pub fn split_word_into_suffix_base(word: &str) -> Result<Word, String> {
     let suffixes = read_suffix_csv();
     if word.is_empty() {
         return Err("Empty string".into());
@@ -45,8 +45,8 @@ pub fn split_word_into_suffix_base(word: &str) -> Result<Word, Box<dyn Error>> {
 /// and return the base and suffixes.
 ///
 /// * `word` - A word to split.
-pub fn recursive_split(word: &str, mut suffixes: Vec<Suffix>) -> Result<Word, Box<dyn Error>> {
-    let split_word_result: Result<Word, Box<dyn Error>> = split_word_into_suffix_base(word);
+pub fn recursive_split(word: &str, mut suffixes: Vec<Suffix>) -> Result<Word, String> {
+    let split_word_result: Result<Word, String> = split_word_into_suffix_base(word);
     match split_word_result {
         Ok(split_word) => {
             if let Some(suffix) = split_word.suffixes {
@@ -72,7 +72,7 @@ pub fn recursive_split(word: &str, mut suffixes: Vec<Suffix>) -> Result<Word, Bo
                 Ok(split_word)
             }
         }
-        Err(err) => Err(err),
+        Err(err) => Err(err.into()),
     }
 }
 

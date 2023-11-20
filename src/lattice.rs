@@ -1,12 +1,20 @@
 use std::str::FromStr;
 
-use crate::word::{PartOfSpeech, Suffix, Word};
+use crate::{
+    split_clitic::split_word_into_word_clitic,
+    split_suffix::recursive_split,
+    word::{self, PartOfSpeech, Suffix, Word},
+};
 
 /// node of lattice
 ///
 /// The `Node` is an unit separated by a space in the input sentence.
 #[derive(Clone, Debug)]
 struct Node {
+    /// words in the node
+    ///
+    /// If the token includes a clitic, the clitic is indexed as a word.
+    /// For example, "niyalmai" is indexed as `vec!["niyalma", "i"]`.
     words: Vec<Word>,
     emission_cost: usize,
     /// minimum cost of path from the beginning to the node
@@ -19,12 +27,67 @@ struct Node {
     category_id: usize,
 }
 
+impl Node {
+    // TODO: culculate emission cost
+    fn from_token(token: &str) -> Vec<Self> {
+        let mut nodes: Vec<Node> = vec![];
+        let word_with_suffixes = recursive_split(token, vec![]);
+        match word_with_suffixes {
+            Ok(word) => {
+                let node = Node {
+                    words: vec![word],
+                    emission_cost: 0,
+                    path_cost: 0,
+                    left_node: None,
+                    category_id: 0,
+                };
+                nodes.push(node);
+            }
+            Err(e) => {
+                panic!("{}", e);
+            }
+        }
+
+        let words = split_word_into_word_clitic(token).expect("Cannot split word");
+        if words.len() > 1 {
+            let word_entry = words[0].base.as_str();
+            let word_with_suffixes = recursive_split(word_entry, vec![]);
+            match word_with_suffixes {
+                Ok(word) => {
+                    let node = Node {
+                        words: vec![word, words[1].clone()],
+                        emission_cost: 0,
+                        path_cost: 0,
+                        left_node: None,
+                        category_id: 0,
+                    };
+                    nodes.push(node);
+                }
+                Err(e) => {
+                    panic!("{}", e);
+                }
+            }
+        }
+        nodes
+    }
+}
+
 struct Lattice {
     sentence: String,
     lattice: Vec<Vec<Node>>,
 }
 
 impl Lattice {
+    fn from_sentence(sentence: &str) -> Self {
+        let space_separated_token: Vec<&str> = sentence.split_whitespace().collect();
+
+        let lattice = Lattice {
+            sentence: sentence.to_string(),
+            lattice: vec![vec![]],
+        };
+        lattice
+    }
+
     fn add_node(&mut self, node: Node, position: usize) {
         self.lattice[position].push(node);
     }

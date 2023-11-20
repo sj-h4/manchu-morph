@@ -45,6 +45,10 @@ impl Into<Word> for CaseClitic {
     }
 }
 
+/// Split a word into a word and a clitic.
+///
+/// The word is not be fully split into a word and suffixes;
+/// the field `suffixes` of the returned `Word` is `None`.
 pub fn split_word_into_word_clitic(word: &str) -> Result<Vec<Word>, String> {
     let function_words = get_function_word_list();
     if word.is_empty() {
