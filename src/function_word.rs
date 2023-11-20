@@ -1,5 +1,7 @@
-use serde::Deserialize;
+use std::fs;
+
 use crate::word::PartOfSpeech;
+use serde::Deserialize;
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct FunctionWord {
@@ -9,22 +11,8 @@ pub struct FunctionWord {
 }
 
 pub fn get_function_word_list() -> Vec<FunctionWord> {
-    let rdr = csv::Reader::from_path("resources/function_word.csv");
-    match rdr {
-        Ok(mut rdr) => {
-            let mut case_clitics = Vec::new();
-            for result in rdr.deserialize() {
-                if let Ok(result) = result {
-                    let case_clitic: FunctionWord = result;
-                    case_clitics.push(case_clitic);
-                } else {
-                    panic!("Validation Error")
-                }
-            }
-            case_clitics
-        }
-        Err(_) => {
-            panic!("Error reading function word csv")
-        }
-    }
+    let data = fs::read_to_string("resources/function_word.json").expect("Unable to read file");
+    let function_words: Vec<FunctionWord> =
+        serde_json::from_str(&data).expect("JSON was not well-formatted");
+    function_words
 }

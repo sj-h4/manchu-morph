@@ -10,7 +10,7 @@ pub enum SuffixRole {
     Denominaladjective,
 }
 
-#[derive(Clone, Copy, Debug, Deserialize)]
+#[derive(Clone, Copy, Debug, Deserialize, PartialEq)]
 #[serde(rename_all = "snake_case")]
 pub enum Conjugation {
     PerfectiveConverb,
@@ -18,18 +18,18 @@ pub enum Conjugation {
     Plural,
 }
 
-#[derive(Clone, Debug, EnumString)]
+#[derive(Clone, Debug, EnumString, PartialEq)]
+#[strum(serialize_all = "snake_case")]
 pub enum Case {
     Nominative,
     Accusative,
     Genitive,
-    Dative,
+    DativeLocative,
     Instrumental,
-    Locative,
     Vocative,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Detail {
     Conjugation(Conjugation),
     Cases(Vec<Case>),

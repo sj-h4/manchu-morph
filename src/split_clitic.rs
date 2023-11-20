@@ -82,3 +82,21 @@ pub fn split_word_into_word_clitic(word: &str) -> Result<Vec<Word>, String> {
         emission_cost: 0,
     }])
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_split_word_into_word_clitic() {
+        let word = "niyalmai";
+        let split_words = split_word_into_word_clitic(word).unwrap();
+        assert_eq!(split_words.len(), 2);
+        assert_eq!(split_words[0].base, "niyalma");
+        assert_eq!(split_words[1].base, "i");
+        assert_eq!(
+            split_words[1].detail,
+            Some(Detail::Cases(vec![Case::Genitive, Case::Nominative]))
+        );
+    }
+}
