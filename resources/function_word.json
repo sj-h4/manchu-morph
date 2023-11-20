@@ -2,7 +2,7 @@
 	{
 		"entry": "i",
 		"part_of_speech": "clitic",
-		"detail": [
+		"details": [
 			"genitive",
 			"nominative"
 		]
@@ -10,14 +10,14 @@
 	{
 		"entry": "ni",
 		"part_of_speech": "clitic",
-		"detail": [
+		"details": [
 			"genitive"
 		]
 	},
 	{
 		"entry": "be",
 		"part_of_speech": "clitic",
-		"detail": [
+		"details": [
 			"accusative",
 			"nominative"
 		]
@@ -25,15 +25,15 @@
 	{
 		"entry": "de",
 		"part_of_speech": "clitic",
-		"detail": [
-			"dative-locative",
+		"details": [
+			"dative_locative",
 			"genitive"
 		]
 	},
 	{
 		"entry": "ci",
 		"part_of_speech": "clitic",
-		"detail": [
+		"details": [
 			"ablative",
 			"genitive"
 		]
@@ -41,7 +41,7 @@
 	{
 		"entry": "deri",
 		"part_of_speech": "clitic",
-		"detail": [
+		"details": [
 			"prolative"
 		]
 	}

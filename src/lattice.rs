@@ -1,21 +1,6 @@
 use std::str::FromStr;
 
-use crate::split_suffix::{PartOfSpeech, Suffix};
-
-#[derive(Clone, Debug)]
-enum Conjugation {}
-
-#[derive(Clone, Debug)]
-struct Word {
-    base: String,
-    suffixes: Option<Vec<Suffix>>,
-    part_of_speech: PartOfSpeech,
-    /// conjugation of the word
-    ///
-    /// For example, the conjugation of "tuwame" is "converb" and the conjugation of "tuwahe" is "perfective".
-    conjugation: Option<Conjugation>,
-    emission_cost: usize,
-}
+use crate::word::{PartOfSpeech, Suffix, Word};
 
 /// node of lattice
 ///
@@ -35,6 +20,7 @@ struct Node {
 }
 
 struct Lattice {
+    sentence: String,
     lattice: Vec<Vec<Node>>,
 }
 
@@ -80,6 +66,7 @@ impl FromStr for Lattice {
     /// If a clitic is conjugated, the clitic is indexed as a word.
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         let lattice = Lattice {
+            sentence: input.to_string(),
             lattice: vec![vec![]],
         };
         Ok(lattice)
@@ -89,12 +76,13 @@ impl FromStr for Lattice {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::split_suffix::SuffixRole;
+    use crate::word::{Conjugation, SuffixRole};
 
     #[test]
     fn it_works() {
         // cooha be waki seme tumen cooha be unggifi tosoho. (満文老檔 1 p. 1)
         let mut lattice = Lattice {
+            sentence: "cooha be waki seme tumen cooha be unggifi tosoho.".to_string(),
             lattice: vec![vec![]; 11],
         };
         lattice.add_node(
@@ -103,7 +91,7 @@ mod tests {
                     base: "cooha".to_string(),
                     suffixes: None,
                     part_of_speech: PartOfSpeech::Noun,
-                    conjugation: None,
+                    detail: None,
                     emission_cost: 0,
                 }],
                 emission_cost: 0,
@@ -119,12 +107,12 @@ mod tests {
                     base: "coo".to_string(),
                     suffixes: Some(vec![Suffix {
                         suffix: "ha".to_string(),
-                        form: "perfective participle".to_string(),
+                        conjugation: Conjugation::PerfectiveParticle,
                         role: SuffixRole::Functional,
                         part_of_speech: PartOfSpeech::Noun,
                     }]),
                     part_of_speech: PartOfSpeech::Noun,
-                    conjugation: None,
+                    detail: None,
                     emission_cost: 0,
                 }],
                 emission_cost: 0,
@@ -140,7 +128,7 @@ mod tests {
                     base: "be".to_string(),
                     suffixes: None,
                     part_of_speech: PartOfSpeech::Clitic,
-                    conjugation: None,
+                    detail: None,
                     emission_cost: 0,
                 }],
                 emission_cost: 0,
@@ -156,7 +144,7 @@ mod tests {
                     base: "waki".to_string(),
                     suffixes: None,
                     part_of_speech: PartOfSpeech::Noun,
-                    conjugation: None,
+                    detail: None,
                     emission_cost: 0,
                 }],
                 emission_cost: 0,
@@ -172,7 +160,7 @@ mod tests {
                     base: "seme".to_string(),
                     suffixes: None,
                     part_of_speech: PartOfSpeech::Noun,
-                    conjugation: None,
+                    detail: None,
                     emission_cost: 0,
                 }],
                 emission_cost: 0,
@@ -188,7 +176,7 @@ mod tests {
                     base: "tumen".to_string(),
                     suffixes: None,
                     part_of_speech: PartOfSpeech::Noun,
-                    conjugation: None,
+                    detail: None,
                     emission_cost: 0,
                 }],
                 emission_cost: 0,
@@ -204,7 +192,7 @@ mod tests {
                     base: "cooha".to_string(),
                     suffixes: None,
                     part_of_speech: PartOfSpeech::Noun,
-                    conjugation: None,
+                    detail: None,
                     emission_cost: 0,
                 }],
                 emission_cost: 0,
@@ -220,7 +208,7 @@ mod tests {
                     base: "be".to_string(),
                     suffixes: None,
                     part_of_speech: PartOfSpeech::Clitic,
-                    conjugation: None,
+                    detail: None,
                     emission_cost: 0,
                 }],
                 emission_cost: 0,
@@ -236,12 +224,12 @@ mod tests {
                     base: "unggifi".to_string(),
                     suffixes: Some(vec![Suffix {
                         suffix: "fi".to_string(),
-                        form: "perfective converb".to_string(),
+                        conjugation: Conjugation::PerfectiveConverb,
                         role: SuffixRole::Functional,
                         part_of_speech: PartOfSpeech::Noun,
                     }]),
                     part_of_speech: PartOfSpeech::Noun,
-                    conjugation: None,
+                    detail: None,
                     emission_cost: 0,
                 }],
                 emission_cost: 0,
@@ -257,12 +245,12 @@ mod tests {
                     base: "toso".to_string(),
                     suffixes: Some(vec![Suffix {
                         suffix: "ho".to_string(),
-                        form: "perfective participle".to_string(),
+                        conjugation: Conjugation::PerfectiveParticle,
                         role: SuffixRole::Functional,
                         part_of_speech: PartOfSpeech::Noun,
                     }]),
                     part_of_speech: PartOfSpeech::Noun,
-                    conjugation: None,
+                    detail: None,
                     emission_cost: 0,
                 }],
                 emission_cost: 0,
@@ -278,12 +266,12 @@ mod tests {
                     base: "to".to_string(),
                     suffixes: Some(vec![Suffix {
                         suffix: "so".to_string(),
-                        form: "pulural".to_string(),
+                        conjugation: Conjugation::Plural,
                         role: SuffixRole::Functional,
                         part_of_speech: PartOfSpeech::Noun,
                     }]),
                     part_of_speech: PartOfSpeech::Noun,
-                    conjugation: None,
+                    detail: None,
                     emission_cost: 1,
                 }],
                 emission_cost: 1,

@@ -1,59 +1,14 @@
 use core::panic;
 use std::error::Error;
 
-use serde::Deserialize;
-
-#[derive(Clone, Debug, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum SuffixRole {
-    Functional,
-    Derivational,
-    Deverbal,
-    Denominaladjective,
-}
-
-/// part of speech which suffix attaches to
-#[derive(Clone, Debug, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum PartOfSpeech {
-    Noun,
-    Verb,
-    Clitic,
-}
-
-#[derive(Clone, Debug, Deserialize)]
-pub struct Suffix {
-    /// suffix
-    ///
-    /// For example, "mbi", "ha" or "bu".
-    pub suffix: String,
-    /// form of suffix
-    pub form: String,
-    /// role of suffix
-    ///
-    /// For example, the role of "mbi" is "functional"
-    /// and the role of "bu" is "derivational".
-    pub role: SuffixRole,
-    /// part of speech which suffix attaches to
-    #[serde(rename = "left_pos")]
-    pub part_of_speech: PartOfSpeech,
-}
-
-pub struct SplitWord {
-    base: String,
-    /// suffixes of the word
-    ///
-    /// The order of suffixes is from the right to the left.
-    /// For example, the suffixes of "tuwabumbi" are `vec!["mbi", "bu"]`.
-    suffixes: Option<Vec<Suffix>>,
-}
+use crate::word::{Detail, PartOfSpeech, Suffix, Word};
 
 /// Spilt a word into a suffix and its base.
 ///
 /// Returns Err if the word is empty or consists entirely of whitespace.
 ///
 /// * `word` - A word to split.
-pub fn split_word_into_suffix_base(word: &str) -> Result<SplitWord, Box<dyn Error>> {
+pub fn split_word_into_suffix_base(word: &str) -> Result<Word, Box<dyn Error>> {
     let suffixes = read_suffix_csv();
     if word.is_empty() {
         return Err("Empty string".into());
@@ -62,21 +17,27 @@ pub fn split_word_into_suffix_base(word: &str) -> Result<SplitWord, Box<dyn Erro
         return Err("Whitespace string".into());
     }
     for suffix in suffixes.iter() {
-        let suffix_form = suffix.form.as_str();
-        if word.ends_with(suffix_form) {
-            let base = word[..word.len() - suffix_form.len()].to_string();
-            let suffix = suffix.clone();
-            let suffixes = vec![suffix];
-            let splited_word = SplitWord {
+        let suffix_entry = suffix.suffix.as_str();
+        if word.ends_with(suffix_entry) {
+            let base = word[..word.len() - suffix_entry.len()].to_string();
+            let suffix = suffix;
+            let suffixes = vec![suffix.clone()];
+            let split_word = Word {
                 base,
                 suffixes: Some(suffixes),
+                part_of_speech: suffix.part_of_speech,
+                detail: Some(Detail::Conjugation(suffix.conjugation)),
+                emission_cost: 0,
             };
-            return Ok(splited_word);
+            return Ok(split_word);
         }
     }
-    Ok(SplitWord {
+    Ok(Word {
         base: word.to_string(),
         suffixes: None,
+        part_of_speech: PartOfSpeech::Noun,
+        detail: None,
+        emission_cost: 0,
     })
 }
 
@@ -84,23 +45,29 @@ pub fn split_word_into_suffix_base(word: &str) -> Result<SplitWord, Box<dyn Erro
 /// and return the base and suffixes.
 ///
 /// * `word` - A word to split.
-pub fn recursive_split(word: &str, mut suffixes: Vec<Suffix>) -> Result<SplitWord, Box<dyn Error>> {
-    let split_word_result: Result<SplitWord, Box<dyn Error>> = split_word_into_suffix_base(word);
+pub fn recursive_split(word: &str, mut suffixes: Vec<Suffix>) -> Result<Word, Box<dyn Error>> {
+    let split_word_result: Result<Word, Box<dyn Error>> = split_word_into_suffix_base(word);
     match split_word_result {
         Ok(split_word) => {
             if let Some(suffix) = split_word.suffixes {
                 let base = split_word.base;
                 suffixes.extend(suffix);
                 let split_word = recursive_split(&base, suffixes)?;
-                let split_word = SplitWord {
+                let split_word = Word {
                     base: split_word.base,
                     suffixes: split_word.suffixes,
+                    part_of_speech: split_word.part_of_speech,
+                    detail: split_word.detail,
+                    emission_cost: split_word.emission_cost,
                 };
                 Ok(split_word)
             } else {
-                let split_word = SplitWord {
+                let split_word = Word {
                     base: split_word.base,
                     suffixes: Some(suffixes),
+                    part_of_speech: split_word.part_of_speech,
+                    detail: split_word.detail,
+                    emission_cost: split_word.emission_cost,
                 };
                 Ok(split_word)
             }
@@ -145,7 +112,7 @@ mod tests {
             Ok(split_word) => {
                 let suffix = split_word.suffixes.unwrap();
                 assert_eq!(split_word.base, expected_base);
-                assert_eq!(suffix[0].form, expected_suffix);
+                assert_eq!(suffix[0].suffix, expected_suffix);
             }
             Err(_) => assert!(false),
         }
@@ -170,8 +137,8 @@ mod tests {
                 let suffix = split_word.suffixes.unwrap();
                 assert_eq!(split_word.base, expected_base);
                 assert_eq!(suffix.len(), 2);
-                assert_eq!(suffix[0].form, expected_suffix1);
-                assert_eq!(suffix[1].form, expected_suffix2);
+                assert_eq!(suffix[0].suffix, expected_suffix1);
+                assert_eq!(suffix[1].suffix, expected_suffix2);
             }
             Err(_) => assert!(false),
         }
