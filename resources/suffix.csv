@@ -6,9 +6,9 @@ hobi,perfective_finite,suffix,functional,verb
 kabi,perfective_finite,suffix,functional,verb
 kebi,perfective_finite,suffix,functional,verb
 kobi,perfective_finite,suffix,functional,verb
-hakvbi,negative_perfective finite,suffix,functional,verb
-hekvbi,negative_perfective finite,suffix,functional,verb
-hokvbi,negative_perfective finite,suffix,functional,verb
+hakvbi,negative_perfective_finite,suffix,functional,verb
+hekvbi,negative_perfective_finite,suffix,functional,verb
+hokvbi,negative_perfective_finite,suffix,functional,verb
 ha,perfective_participle,suffix,functional,verb
 he,perfective_participle,suffix,functional,verb
 ho,perfective_participle,suffix,functional,verb
@@ -21,8 +21,8 @@ ro,prospective_finite,suffix,functional,verb
 ki,desiderative_finite,suffix,functional,verb
 kini,optative_finite,suffix,functional,verb
 cina,optative_finite,suffix,functional,verb
-mbihe,perfective_processive participle,suffix,functional,verb
-me,imperfective_coverb,suffix,functional,verb
+mbihe,perfective_processive_participle,suffix,functional,verb
+me,imperfective_converb,suffix,functional,verb
 fi,perfective_converb,suffix,functional,verb
 pi,perfective_converb,suffix,functional,verb
 mpi,perfective_converb,suffix,functional,verb
@@ -42,8 +42,8 @@ mbime,simultaneous_converb,suffix,functional,verb
 ralame,alternative_converb,suffix,functional,verb
 relame,alternative_converb,suffix,functional,verb
 rolame,alternative_converb,suffix,functional,verb
-hakv.negative_perfective_converb,suffix,functional,verb
-hekv.negative_perfective_converb,suffix,functional,verb
-hokv.negative_perfective_converb,suffix,functional,verb
+hakv,negative_perfective_converb,suffix,functional,verb
+hekv,negative_perfective_converb,suffix,functional,verb
+hokv,negative_perfective_converb,suffix,functional,verb
 bu,passive_causative_verbal,suffix,derivational,verb
-ngge,denominal_adjictive,suffix,denominaladjective,noun
+ngge,denominal_adjective,suffix,denominaladjective,noun

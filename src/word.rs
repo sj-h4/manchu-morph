@@ -13,14 +13,14 @@ pub enum SuffixRole {
 #[derive(Clone, Copy, Debug, Deserialize, PartialEq)]
 #[serde(rename_all = "snake_case")]
 pub enum Conjugation {
-    PrefectiveFinite,
+    PerfectiveFinite,
     PerfectiveConverb,
-    PerfectiveParticle,
-    PrefectiveProcessive,
+    PerfectiveParticiple,
+    PerfectiveProcessiveParticiple,
     ImperfectiveFinite,
     ImperfectiveConverb,
     NegativePerfectiveFinite,
-    NegativePrefectiveConverb,
+    NegativePerfectiveConverb,
     NegativeParticle,
     ProspectiveFinite,
     DesiderativeFinite,
@@ -33,7 +33,7 @@ pub enum Conjugation {
     ApprehensiveConverb,
     SimultaneousConverb,
     AlternativeConverb,
-    Denominaladjective,
+    DenominalAdjective,
     PassiveCausativeVerbal,
     Plural,
 }

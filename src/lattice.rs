@@ -1,9 +1,7 @@
 use std::str::FromStr;
 
 use crate::{
-    split_clitic::split_word_into_word_clitic,
-    split_suffix::recursive_split,
-    word::{self, PartOfSpeech, Suffix, Word},
+    split_clitic::split_word_into_word_clitic, split_suffix::generate_all_segmentations, word::Word,
 };
 
 /// node of lattice
@@ -27,45 +25,42 @@ struct Node {
     category_id: usize,
 }
 
+impl From<Word> for Node {
+    fn from(word: Word) -> Self {
+        Node {
+            words: vec![word],
+            emission_cost: 0,
+            path_cost: 0,
+            left_node: None,
+            category_id: 0,
+        }
+    }
+}
+
 impl Node {
     // TODO: culculate emission cost
     fn from_token(token: &str) -> Vec<Self> {
         let mut nodes: Vec<Node> = vec![];
-        let word_with_suffixes = recursive_split(token, vec![]);
-        match word_with_suffixes {
-            Ok(word) => {
+        let all_segmentations = generate_all_segmentations(token, vec![]);
+
+        for segmentation in all_segmentations {
+            let node = Node::from(segmentation);
+            nodes.push(node);
+        }
+
+        let words = split_word_into_word_clitic(token).expect("Cannot split word");
+        if words.len() == 2 {
+            let word_entry = words[0].base.as_str();
+            let all_segmentations = generate_all_segmentations(word_entry, vec![]);
+            for segmentation in all_segmentations {
                 let node = Node {
-                    words: vec![word],
+                    words: vec![segmentation, words[1].clone()],
                     emission_cost: 0,
                     path_cost: 0,
                     left_node: None,
                     category_id: 0,
                 };
                 nodes.push(node);
-            }
-            Err(e) => {
-                panic!("{}", e);
-            }
-        }
-
-        let words = split_word_into_word_clitic(token).expect("Cannot split word");
-        if words.len() > 1 {
-            let word_entry = words[0].base.as_str();
-            let word_with_suffixes = recursive_split(word_entry, vec![]);
-            match word_with_suffixes {
-                Ok(word) => {
-                    let node = Node {
-                        words: vec![word, words[1].clone()],
-                        emission_cost: 0,
-                        path_cost: 0,
-                        left_node: None,
-                        category_id: 0,
-                    };
-                    nodes.push(node);
-                }
-                Err(e) => {
-                    panic!("{}", e);
-                }
             }
         }
         nodes
@@ -139,7 +134,7 @@ impl FromStr for Lattice {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::word::{Conjugation, SuffixRole};
+    use crate::word::{Conjugation, PartOfSpeech, Suffix, SuffixRole};
 
     #[test]
     fn it_works() {
@@ -170,7 +165,7 @@ mod tests {
                     base: "coo".to_string(),
                     suffixes: Some(vec![Suffix {
                         suffix: "ha".to_string(),
-                        conjugation: Conjugation::PerfectiveParticle,
+                        conjugation: Conjugation::PerfectiveParticiple,
                         role: SuffixRole::Functional,
                         part_of_speech: PartOfSpeech::Noun,
                     }]),
@@ -308,7 +303,7 @@ mod tests {
                     base: "toso".to_string(),
                     suffixes: Some(vec![Suffix {
                         suffix: "ho".to_string(),
-                        conjugation: Conjugation::PerfectiveParticle,
+                        conjugation: Conjugation::PerfectiveParticiple,
                         role: SuffixRole::Functional,
                         part_of_speech: PartOfSpeech::Noun,
                     }]),

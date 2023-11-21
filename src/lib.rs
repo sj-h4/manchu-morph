@@ -1,8 +1,8 @@
-mod function_word;
-mod lattice;
-mod split_clitic;
-mod split_suffix;
-mod word;
+pub mod function_word;
+pub mod lattice;
+pub mod split_clitic;
+pub mod split_suffix;
+pub mod word;
 #[cfg(test)]
 mod tests {
 
