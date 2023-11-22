@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use serde::Serialize;
 
 use crate::{
     split_clitic::split_word_into_word_clitic, split_suffix::generate_all_segmentations, word::Word,
@@ -7,7 +7,7 @@ use crate::{
 /// node of lattice
 ///
 /// The `Node` is an unit separated by a space in the input sentence.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 struct Node {
     /// words in the node
     ///
@@ -67,15 +67,18 @@ impl Node {
     }
 }
 
-struct Lattice {
+#[derive(Serialize)]
+pub struct Lattice {
     sentence: String,
     lattice: Vec<Vec<Node>>,
 }
 
 impl Lattice {
-    fn from_sentence(sentence: &str) -> Self {
+    /// Create a lattice from a sentence.
+    pub fn from_sentence(sentence: &str) -> Self {
         let space_separated_token: Vec<&str> = sentence.split_whitespace().collect();
 
+        // TODO: write logic to create lattice
         let lattice = Lattice {
             sentence: sentence.to_string(),
             lattice: vec![vec![]],
@@ -83,12 +86,13 @@ impl Lattice {
         lattice
     }
 
-    fn add_node(&mut self, node: Node, position: usize) {
-        self.lattice[position].push(node);
+    /// Serialize a `Lattice` into a JSON string.
+    pub fn to_json_string(&self) -> Result<String, serde_json::Error> {
+        serde_json::to_string(&self)
     }
 
-    /// calculate the minimum cost path from the beginning to the end of the lattice
-    fn calculate_path_costs(&mut self, cost_matrix: Vec<Vec<String>>) {
+    /// Calculate the minimum cost path from the beginning to the end of the lattice.
+    pub fn calculate_path_costs(&mut self, cost_matrix: Vec<Vec<String>>) {
         for i in 1..self.lattice.len() {
             let previous_nodes = &self.lattice[i - 1].clone();
             let current_nodes = &mut self.lattice[i];
@@ -115,19 +119,9 @@ impl Lattice {
             }
         }
     }
-}
 
-impl FromStr for Lattice {
-    type Err = String;
-    /// create a lattice from a sentence
-    ///
-    /// If a clitic is conjugated, the clitic is indexed as a word.
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        let lattice = Lattice {
-            sentence: input.to_string(),
-            lattice: vec![vec![]],
-        };
-        Ok(lattice)
+    fn add_node(&mut self, node: Node, position: usize) {
+        self.lattice[position].push(node);
     }
 }
 
