@@ -65,6 +65,9 @@ pub fn split_word_into_word_clitic(word: &str) -> Result<Vec<Word>, String> {
         let clitic_entry = case_clitic.entry.as_str();
         if word.ends_with(clitic_entry) {
             let base = word[..word.len() - clitic_entry.len()].to_string();
+            if base.is_empty() {
+                return Ok(vec![case_clitic.into()]);
+            }
             let split_words = vec![
                 Word {
                     base,

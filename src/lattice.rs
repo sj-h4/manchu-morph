@@ -143,7 +143,7 @@ mod tests {
     use std::vec;
 
     use super::*;
-    use crate::word::{Conjugation, PartOfSpeech, Suffix, SuffixRole};
+    use crate::word::{self, Conjugation, PartOfSpeech, Suffix, SuffixRole};
 
     fn create_lattice() -> Lattice {
         // cooha be waki seme tumen cooha be unggifi tosoho. (満文老檔 1 p. 1)
@@ -392,5 +392,26 @@ mod tests {
         lattice.calculate_path_costs(vec![vec![]]);
         assert_eq!(lattice.lattice[8].0.get(0).unwrap().path_cost, 0);
         assert_eq!(lattice.lattice[8].0.get(1).unwrap().path_cost, 0);
+    }
+
+    #[test]
+    fn test_word_node_from_token() {
+        let word_node = WordNode::from_token("niyalmai");
+        let len = word_node.0.len();
+        assert_eq!(len, 2);
+        assert_eq!(word_node.0[1].words[0].base, "niyalma");
+    }
+
+    #[test]
+    fn test_lattice_from_sentence() {
+        // cooha be waki seme tumen cooha be unggifi tosoho. (満文老檔 1 p. 1)
+        let lattice = Lattice::from_sentence("cooha be waki seme tumen cooha be unggifi tosoho.");
+        let word_node_cooha = &lattice.lattice[0];
+        assert_eq!(word_node_cooha.0[0].words[0].base, "cooha");
+        assert_eq!(word_node_cooha.0[1].words[0].base, "coo");
+        assert_eq!(
+            word_node_cooha.0[1].words[0].suffixes.as_ref().unwrap()[0].suffix,
+            "ha"
+        );
     }
 }
