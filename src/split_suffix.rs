@@ -1,5 +1,4 @@
 use core::panic;
-use std::error::Error;
 
 use crate::word::{Detail, PartOfSpeech, Suffix, Word};
 
@@ -8,7 +7,7 @@ use crate::word::{Detail, PartOfSpeech, Suffix, Word};
 /// Returns Err if the word is empty or consists entirely of whitespace.
 ///
 /// * `word` - A word to split.
-pub fn split_word_into_suffix_base(word: &str) -> Result<Word, Box<dyn Error>> {
+pub fn split_word_into_suffix_base(word: &str) -> Result<Word, String> {
     let suffixes = read_suffix_csv();
     if word.is_empty() {
         return Err("Empty string".into());
@@ -41,38 +40,26 @@ pub fn split_word_into_suffix_base(word: &str) -> Result<Word, Box<dyn Error>> {
     })
 }
 
-/// Split a word into a suffix and its base recursively until the suffix is not found
-/// and return the base and suffixes.
-///
-/// * `word` - A word to split.
-pub fn recursive_split(word: &str, mut suffixes: Vec<Suffix>) -> Result<Word, Box<dyn Error>> {
-    let split_word_result: Result<Word, Box<dyn Error>> = split_word_into_suffix_base(word);
-    match split_word_result {
-        Ok(split_word) => {
-            if let Some(suffix) = split_word.suffixes {
-                let base = split_word.base;
-                suffixes.extend(suffix);
-                let split_word = recursive_split(&base, suffixes)?;
-                let split_word = Word {
-                    base: split_word.base,
-                    suffixes: split_word.suffixes,
-                    part_of_speech: split_word.part_of_speech,
-                    detail: split_word.detail,
-                    emission_cost: split_word.emission_cost,
-                };
-                Ok(split_word)
-            } else {
-                let split_word = Word {
-                    base: split_word.base,
-                    suffixes: Some(suffixes),
-                    part_of_speech: split_word.part_of_speech,
-                    detail: split_word.detail,
-                    emission_cost: split_word.emission_cost,
-                };
-                Ok(split_word)
-            }
+/// Generate all possible segmentations of a word.
+pub fn generate_all_segmentations(token: &str, mut words: Vec<Word>) -> Vec<Word> {
+    // First, add the original word to the list of words.
+    if words.len() == 0 {
+        words.push(Word {
+            base: token.to_string(),
+            suffixes: None,
+            part_of_speech: PartOfSpeech::Noun,
+            detail: None,
+            emission_cost: 0,
+        });
+    }
+    let segmented_word = split_word_into_suffix_base(token).expect("Error splitting word");
+    match segmented_word.suffixes {
+        Some(_) => {
+            words.push(segmented_word.clone());
+            let base = segmented_word.base;
+            generate_all_segmentations(&base, words)
         }
-        Err(err) => Err(err),
+        None => words,
     }
 }
 
@@ -86,13 +73,13 @@ fn read_suffix_csv() -> Vec<Suffix> {
                     let suffix: Suffix = result;
                     suffixes.push(suffix);
                 } else {
-                    panic!("Validation Error")
+                    panic!("{}", result.unwrap_err());
                 }
             }
             suffixes
         }
-        Err(_) => {
-            panic!("Error reading suffix csv")
+        Err(e) => {
+            panic!("{}", e);
         }
     }
 }
@@ -125,28 +112,11 @@ mod tests {
     }
 
     #[test]
-    fn it_works_recursively() {
-        let valid_word = recursive_split("tuwabumbi", vec![]);
-
-        let expected_base = "tuwa";
-        let expected_suffix1 = "mbi";
-        let expected_suffix2 = "bu";
-
-        match valid_word {
-            Ok(split_word) => {
-                let suffix = split_word.suffixes.unwrap();
-                assert_eq!(split_word.base, expected_base);
-                assert_eq!(suffix.len(), 2);
-                assert_eq!(suffix[0].suffix, expected_suffix1);
-                assert_eq!(suffix[1].suffix, expected_suffix2);
-            }
-            Err(_) => assert!(false),
-        }
-
-        let whitespace = recursive_split("   ", vec![]);
-        assert!(whitespace.is_err());
-
-        let empty = recursive_split("", vec![]);
-        assert!(empty.is_err());
+    fn test_generate_all_segmentations() {
+        let valid_word = generate_all_segmentations("tuwabumbi", vec![]);
+        assert_eq!(valid_word.len(), 3);
+        assert_eq!(valid_word[0].base, "tuwabumbi");
+        assert_eq!(valid_word[1].base, "tuwabu");
+        assert_eq!(valid_word[2].base, "tuwa");
     }
 }

@@ -1,48 +1,49 @@
 suffix,form,type,role,left_pos
-mbi,imperfective finite,suffix,functional,verb
-habi,perfective finite,suffix,functional,verb
-hebi,perfective finite,suffix,functional,verb
-hobi,perfective finite,suffix,functional,verb
-kabi,perfective finite,suffix,functional,verb
-kebi,perfective finite,suffix,functional,verb
-kobi,perfective finite,suffix,functional,verb
-hakvbi,negative perfective finite,suffix,functional,verb
-hekvbi,negative perfective finite,suffix,functional,verb
-hokvbi,negative perfective finite,suffix,functional,verb
-ha,perfective participle,suffix,functional,verb
-he,perfective participle,suffix,functional,verb
-ho,perfective participle,suffix,functional,verb
-ka,perfective participle,suffix,functional,verb
-ke,perfective participle,suffix,functional,verb
-ko,perfective participle,suffix,functional,verb
-ra,prospective finite,suffix,functional,verb
-re,prospective finite,suffix,functional,verb
-ro,prospective finite,suffix,functional,verb
-ki,desiderative finite,suffix,functional,verb
-kini,optative finite,suffix,functional,verb
-cina,optative finite,suffix,functional,verb
-mbihe,perfective processive participle,suffix,functional,verb
-me,imperfective coverb,suffix,functional,verb
-fi,perfective converb,suffix,functional,verb
-pi,perfective converb,suffix,functional,verb
-mpi,perfective converb,suffix,functional,verb
-hai,durative converb,suffix,functional,verb
-hei,durative converb,suffix,functional,verb
-hoi,durative converb,suffix,functional,verb
-ci,conditional converb,suffix,functional,verb
-cibe,concessive converb,suffix,functional,verb
-tala,terminative converb,suffix,functional,verb
-tele,terminative converb,suffix,functional,verb
-tolo,terminative converb,suffix,functional,verb
-nggala,prefactory converb,suffix,functional,verb
-nggale,prefactory converb,suffix,functional,verb
-nggalo,prefactory converb,suffix,functional,verb
-rahv,apprehensive converb,suffix,functional,verb
-mbime,simultaneous converb,suffix,functional,verb
-ralame,alternative converb,suffix,functional,verb
-relame,alternative converb,suffix,functional,verb
-rolame,alternative converb,suffix,functional,verb
-hekv,suffix,functional,verb
-bu,suffix,derivational,verb
-ngge,suffix,denominaladjective,noun
-ke,suffix,deverbal,verb
+mbi,imperfective_finite,suffix,functional,verb
+habi,perfective_finite,suffix,functional,verb
+hebi,perfective_finite,suffix,functional,verb
+hobi,perfective_finite,suffix,functional,verb
+kabi,perfective_finite,suffix,functional,verb
+kebi,perfective_finite,suffix,functional,verb
+kobi,perfective_finite,suffix,functional,verb
+hakvbi,negative_perfective_finite,suffix,functional,verb
+hekvbi,negative_perfective_finite,suffix,functional,verb
+hokvbi,negative_perfective_finite,suffix,functional,verb
+ha,perfective_participle,suffix,functional,verb
+he,perfective_participle,suffix,functional,verb
+ho,perfective_participle,suffix,functional,verb
+ka,perfective_participle,suffix,functional,verb
+ke,perfective_participle,suffix,functional,verb
+ko,perfective_participle,suffix,functional,verb
+ra,prospective_finite,suffix,functional,verb
+re,prospective_finite,suffix,functional,verb
+ro,prospective_finite,suffix,functional,verb
+ki,desiderative_finite,suffix,functional,verb
+kini,optative_finite,suffix,functional,verb
+cina,optative_finite,suffix,functional,verb
+mbihe,perfective_processive_participle,suffix,functional,verb
+me,imperfective_converb,suffix,functional,verb
+fi,perfective_converb,suffix,functional,verb
+pi,perfective_converb,suffix,functional,verb
+mpi,perfective_converb,suffix,functional,verb
+hai,durative_converb,suffix,functional,verb
+hei,durative_converb,suffix,functional,verb
+hoi,durative_converb,suffix,functional,verb
+ci,conditional_converb,suffix,functional,verb
+cibe,concessive_converb,suffix,functional,verb
+tala,terminative_converb,suffix,functional,verb
+tele,terminative_converb,suffix,functional,verb
+tolo,terminative_converb,suffix,functional,verb
+nggala,prefactory_converb,suffix,functional,verb
+nggale,prefactory_converb,suffix,functional,verb
+nggalo,prefactory_converb,suffix,functional,verb
+rahv,apprehensive_converb,suffix,functional,verb
+mbime,simultaneous_converb,suffix,functional,verb
+ralame,alternative_converb,suffix,functional,verb
+relame,alternative_converb,suffix,functional,verb
+rolame,alternative_converb,suffix,functional,verb
+hakv,negative_perfective_converb,suffix,functional,verb
+hekv,negative_perfective_converb,suffix,functional,verb
+hokv,negative_perfective_converb,suffix,functional,verb
+bu,passive_causative_verbal,suffix,derivational,verb
+ngge,denominal_adjective,suffix,denominaladjective,noun
