@@ -4,11 +4,8 @@ use crate::{
     split_clitic::split_word_into_word_clitic, split_suffix::generate_all_segmentations, word::Word,
 };
 
-/// node of lattice
-///
-/// The `Node` is an unit separated by a space in the input sentence.
 #[derive(Clone, Debug, Serialize)]
-struct Node {
+struct MorphemeNode {
     /// words in the node
     ///
     /// If the token includes a clitic, the clitic is indexed as a word.
@@ -18,16 +15,16 @@ struct Node {
     /// minimum cost of path from the beginning to the node
     path_cost: usize,
     /// left node of the node in the path with the minimum cost
-    left_node: Option<Box<Node>>,
+    left_node: Option<Box<MorphemeNode>>,
     /// category id of the node
     ///
     /// The category indicates the part of speech, conjugation, semantic role and so on.
     category_id: usize,
 }
 
-impl From<Word> for Node {
+impl From<Word> for MorphemeNode {
     fn from(word: Word) -> Self {
-        Node {
+        MorphemeNode {
             words: vec![word],
             emission_cost: 0,
             path_cost: 0,
@@ -37,15 +34,21 @@ impl From<Word> for Node {
     }
 }
 
-impl Node {
-    // TODO: culculate emission cost
-    fn from_token(token: &str) -> Vec<Self> {
-        let mut nodes: Vec<Node> = vec![];
-        let all_segmentations = generate_all_segmentations(token, vec![]);
+/// node separated by a space
+///
+/// Basically, the node is a word, but it has two words if the word includes a clitic.
+///
+/// For example, "mini boo" is indexed as `vec!["mini", "boo"]`.
+#[derive(Serialize, Clone, Debug)]
+struct WordNode(Vec<MorphemeNode>);
 
+impl WordNode {
+    fn from_token(token: &str) -> Self {
+        let mut word_node = WordNode(vec![]);
+        let all_segmentations = generate_all_segmentations(token, vec![]);
         for segmentation in all_segmentations {
-            let node = Node::from(segmentation);
-            nodes.push(node);
+            let node = MorphemeNode::from(segmentation);
+            word_node.add(node);
         }
 
         let words = split_word_into_word_clitic(token).expect("Cannot split word");
@@ -53,35 +56,30 @@ impl Node {
             let word_entry = words[0].base.as_str();
             let all_segmentations = generate_all_segmentations(word_entry, vec![]);
             for segmentation in all_segmentations {
-                let node = Node {
+                let node = MorphemeNode {
                     words: vec![segmentation, words[1].clone()],
                     emission_cost: 0,
                     path_cost: 0,
                     left_node: None,
                     category_id: 0,
                 };
-                nodes.push(node);
+                word_node.add(node);
             }
         }
-        nodes
+        word_node
     }
-}
 
-#[derive(Serialize, Clone, Debug)]
-struct Segment(Vec<Node>);
-
-impl Segment {
-    fn add(&mut self, node: Node) {
+    fn add(&mut self, node: MorphemeNode) {
         self.0.push(node);
     }
 
-    fn get(&self, index: usize) -> Option<&Node> {
+    fn get(&self, index: usize) -> Option<&MorphemeNode> {
         self.0.get(index)
     }
 }
 
-impl IntoIterator for Segment {
-    type Item = Node;
+impl IntoIterator for WordNode {
+    type Item = MorphemeNode;
     type IntoIter = std::vec::IntoIter<Self::Item>;
 
     fn into_iter(self) -> Self::IntoIter {
@@ -92,19 +90,20 @@ impl IntoIterator for Segment {
 #[derive(Serialize)]
 pub struct Lattice {
     sentence: String,
-    lattice: Vec<Segment>,
+    lattice: Vec<WordNode>,
 }
 
 impl Lattice {
     /// Create a lattice from a sentence.
     pub fn from_sentence(sentence: &str) -> Self {
         let space_separated_token: Vec<&str> = sentence.split_whitespace().collect();
-
-        // TODO: write logic to create lattice
-        let lattice = Lattice {
+        let mut lattice = Lattice {
             sentence: sentence.to_string(),
-            lattice: vec![Segment(vec![])],
+            lattice: vec![WordNode(vec![]); space_separated_token.len()],
         };
+        for (i, token) in space_separated_token.iter().enumerate() {
+            lattice.lattice[i] = WordNode::from_token(token);
+        }
         lattice
     }
 
@@ -142,7 +141,7 @@ impl Lattice {
         }
     }
 
-    fn add_node(&mut self, node: Node, position: usize) {
+    fn add_node(&mut self, node: MorphemeNode, position: usize) {
         self.lattice[position].add(node);
     }
 }
@@ -157,10 +156,10 @@ mod tests {
         // cooha be waki seme tumen cooha be unggifi tosoho. (満文老檔 1 p. 1)
         let mut lattice = Lattice {
             sentence: "cooha be waki seme tumen cooha be unggifi tosoho.".to_string(),
-            lattice: vec![Segment(vec![]); 11],
+            lattice: vec![WordNode(vec![]); 11],
         };
         lattice.add_node(
-            Node {
+            MorphemeNode {
                 words: vec![Word {
                     base: "cooha".to_string(),
                     suffixes: None,
@@ -176,7 +175,7 @@ mod tests {
             0,
         );
         lattice.add_node(
-            Node {
+            MorphemeNode {
                 words: vec![Word {
                     base: "coo".to_string(),
                     suffixes: Some(vec![Suffix {
@@ -197,7 +196,7 @@ mod tests {
             0,
         );
         lattice.add_node(
-            Node {
+            MorphemeNode {
                 words: vec![Word {
                     base: "be".to_string(),
                     suffixes: None,
@@ -213,7 +212,7 @@ mod tests {
             1,
         );
         lattice.add_node(
-            Node {
+            MorphemeNode {
                 words: vec![Word {
                     base: "waki".to_string(),
                     suffixes: None,
@@ -229,7 +228,7 @@ mod tests {
             2,
         );
         lattice.add_node(
-            Node {
+            MorphemeNode {
                 words: vec![Word {
                     base: "seme".to_string(),
                     suffixes: None,
@@ -245,7 +244,7 @@ mod tests {
             3,
         );
         lattice.add_node(
-            Node {
+            MorphemeNode {
                 words: vec![Word {
                     base: "tumen".to_string(),
                     suffixes: None,
@@ -261,7 +260,7 @@ mod tests {
             4,
         );
         lattice.add_node(
-            Node {
+            MorphemeNode {
                 words: vec![Word {
                     base: "cooha".to_string(),
                     suffixes: None,
@@ -277,7 +276,7 @@ mod tests {
             5,
         );
         lattice.add_node(
-            Node {
+            MorphemeNode {
                 words: vec![Word {
                     base: "be".to_string(),
                     suffixes: None,
@@ -293,7 +292,7 @@ mod tests {
             6,
         );
         lattice.add_node(
-            Node {
+            MorphemeNode {
                 words: vec![Word {
                     base: "unggifi".to_string(),
                     suffixes: Some(vec![Suffix {
@@ -314,7 +313,7 @@ mod tests {
             7,
         );
         lattice.add_node(
-            Node {
+            MorphemeNode {
                 words: vec![Word {
                     base: "toso".to_string(),
                     suffixes: Some(vec![Suffix {
@@ -335,7 +334,7 @@ mod tests {
             8,
         );
         lattice.add_node(
-            Node {
+            MorphemeNode {
                 words: vec![Word {
                     base: "to".to_string(),
                     suffixes: Some(vec![Suffix {
