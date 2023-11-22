@@ -72,10 +72,6 @@ impl WordNode {
     fn add(&mut self, node: MorphemeNode) {
         self.0.push(node);
     }
-
-    fn get(&self, index: usize) -> Option<&MorphemeNode> {
-        self.0.get(index)
-    }
 }
 
 impl IntoIterator for WordNode {
@@ -140,25 +136,19 @@ impl Lattice {
             }
         }
     }
-
-    fn add_node(&mut self, node: MorphemeNode, position: usize) {
-        self.lattice[position].add(node);
-    }
 }
 
 #[cfg(test)]
 mod tests {
+    use std::vec;
+
     use super::*;
     use crate::word::{Conjugation, PartOfSpeech, Suffix, SuffixRole};
 
-    #[test]
-    fn it_works() {
+    fn create_lattice() -> Lattice {
         // cooha be waki seme tumen cooha be unggifi tosoho. (満文老檔 1 p. 1)
-        let mut lattice = Lattice {
-            sentence: "cooha be waki seme tumen cooha be unggifi tosoho.".to_string(),
-            lattice: vec![WordNode(vec![]); 11],
-        };
-        lattice.add_node(
+        let sentence = "cooha be waki seme tumen cooha be unggifi tosoho.";
+        let word_node_0 = WordNode(vec![
             MorphemeNode {
                 words: vec![Word {
                     base: "cooha".to_string(),
@@ -172,9 +162,6 @@ mod tests {
                 left_node: None,
                 category_id: 0,
             },
-            0,
-        );
-        lattice.add_node(
             MorphemeNode {
                 words: vec![Word {
                     base: "coo".to_string(),
@@ -193,73 +180,60 @@ mod tests {
                 left_node: None,
                 category_id: 0,
             },
-            0,
-        );
-        lattice.add_node(
-            MorphemeNode {
-                words: vec![Word {
-                    base: "be".to_string(),
-                    suffixes: None,
-                    part_of_speech: PartOfSpeech::Clitic,
-                    detail: None,
-                    emission_cost: 0,
-                }],
+        ]);
+        let word_node_1 = WordNode(vec![MorphemeNode {
+            words: vec![Word {
+                base: "be".to_string(),
+                suffixes: None,
+                part_of_speech: PartOfSpeech::Clitic,
+                detail: None,
                 emission_cost: 0,
-                path_cost: 0,
-                left_node: None,
-                category_id: 0,
-            },
-            1,
-        );
-        lattice.add_node(
-            MorphemeNode {
-                words: vec![Word {
-                    base: "waki".to_string(),
-                    suffixes: None,
-                    part_of_speech: PartOfSpeech::Noun,
-                    detail: None,
-                    emission_cost: 0,
-                }],
+            }],
+            emission_cost: 0,
+            path_cost: 0,
+            left_node: None,
+            category_id: 0,
+        }]);
+        let word_node_2 = WordNode(vec![MorphemeNode {
+            words: vec![Word {
+                base: "waki".to_string(),
+                suffixes: None,
+                part_of_speech: PartOfSpeech::Noun,
+                detail: None,
                 emission_cost: 0,
-                path_cost: 0,
-                left_node: None,
-                category_id: 0,
-            },
-            2,
-        );
-        lattice.add_node(
-            MorphemeNode {
-                words: vec![Word {
-                    base: "seme".to_string(),
-                    suffixes: None,
-                    part_of_speech: PartOfSpeech::Noun,
-                    detail: None,
-                    emission_cost: 0,
-                }],
+            }],
+            emission_cost: 0,
+            path_cost: 0,
+            left_node: None,
+            category_id: 0,
+        }]);
+        let word_node_3 = WordNode(vec![MorphemeNode {
+            words: vec![Word {
+                base: "seme".to_string(),
+                suffixes: None,
+                part_of_speech: PartOfSpeech::Noun,
+                detail: None,
                 emission_cost: 0,
-                path_cost: 0,
-                left_node: None,
-                category_id: 0,
-            },
-            3,
-        );
-        lattice.add_node(
-            MorphemeNode {
-                words: vec![Word {
-                    base: "tumen".to_string(),
-                    suffixes: None,
-                    part_of_speech: PartOfSpeech::Noun,
-                    detail: None,
-                    emission_cost: 0,
-                }],
+            }],
+            emission_cost: 0,
+            path_cost: 0,
+            left_node: None,
+            category_id: 0,
+        }]);
+        let word_node_4 = WordNode(vec![MorphemeNode {
+            words: vec![Word {
+                base: "tumen".to_string(),
+                suffixes: None,
+                part_of_speech: PartOfSpeech::Noun,
+                detail: None,
                 emission_cost: 0,
-                path_cost: 0,
-                left_node: None,
-                category_id: 0,
-            },
-            4,
-        );
-        lattice.add_node(
+            }],
+            emission_cost: 0,
+            path_cost: 0,
+            left_node: None,
+            category_id: 0,
+        }]);
+        let word_node_5 = WordNode(vec![
             MorphemeNode {
                 words: vec![Word {
                     base: "cooha".to_string(),
@@ -273,14 +247,16 @@ mod tests {
                 left_node: None,
                 category_id: 0,
             },
-            5,
-        );
-        lattice.add_node(
             MorphemeNode {
                 words: vec![Word {
-                    base: "be".to_string(),
-                    suffixes: None,
-                    part_of_speech: PartOfSpeech::Clitic,
+                    base: "coo".to_string(),
+                    suffixes: Some(vec![Suffix {
+                        suffix: "ha".to_string(),
+                        conjugation: Conjugation::PerfectiveParticiple,
+                        role: SuffixRole::Functional,
+                        part_of_speech: PartOfSpeech::Noun,
+                    }]),
+                    part_of_speech: PartOfSpeech::Noun,
                     detail: None,
                     emission_cost: 0,
                 }],
@@ -289,12 +265,24 @@ mod tests {
                 left_node: None,
                 category_id: 0,
             },
-            6,
-        );
-        lattice.add_node(
+        ]);
+        let word_node_6 = WordNode(vec![MorphemeNode {
+            words: vec![Word {
+                base: "be".to_string(),
+                suffixes: None,
+                part_of_speech: PartOfSpeech::Clitic,
+                detail: None,
+                emission_cost: 0,
+            }],
+            emission_cost: 0,
+            path_cost: 0,
+            left_node: None,
+            category_id: 0,
+        }]);
+        let word_node_7 = WordNode(vec![
             MorphemeNode {
                 words: vec![Word {
-                    base: "unggifi".to_string(),
+                    base: "unggi".to_string(),
                     suffixes: Some(vec![Suffix {
                         suffix: "fi".to_string(),
                         conjugation: Conjugation::PerfectiveConverb,
@@ -310,9 +298,39 @@ mod tests {
                 left_node: None,
                 category_id: 0,
             },
-            7,
-        );
-        lattice.add_node(
+            MorphemeNode {
+                words: vec![Word {
+                    base: "unggi".to_string(),
+                    suffixes: Some(vec![Suffix {
+                        suffix: "fi".to_string(),
+                        conjugation: Conjugation::PerfectiveConverb,
+                        role: SuffixRole::Functional,
+                        part_of_speech: PartOfSpeech::Noun,
+                    }]),
+                    part_of_speech: PartOfSpeech::Noun,
+                    detail: None,
+                    emission_cost: 0,
+                }],
+                emission_cost: 0,
+                path_cost: 0,
+                left_node: None,
+                category_id: 0,
+            },
+        ]);
+        let word_node_8 = WordNode(vec![
+            MorphemeNode {
+                words: vec![Word {
+                    base: "tosoho".to_string(),
+                    suffixes: None,
+                    part_of_speech: PartOfSpeech::Noun,
+                    detail: None,
+                    emission_cost: 0,
+                }],
+                emission_cost: 0,
+                path_cost: 0,
+                left_node: None,
+                category_id: 0,
+            },
             MorphemeNode {
                 words: vec![Word {
                     base: "toso".to_string(),
@@ -331,9 +349,6 @@ mod tests {
                 left_node: None,
                 category_id: 0,
             },
-            8,
-        );
-        lattice.add_node(
             MorphemeNode {
                 words: vec![Word {
                     base: "to".to_string(),
@@ -352,10 +367,30 @@ mod tests {
                 left_node: None,
                 category_id: 0,
             },
-            8,
-        );
+        ]);
+        let lattice = Lattice {
+            sentence: sentence.to_string(),
+            lattice: vec![
+                word_node_0,
+                word_node_1,
+                word_node_2,
+                word_node_3,
+                word_node_4,
+                word_node_5,
+                word_node_6,
+                word_node_7,
+                word_node_8,
+            ],
+        };
+        lattice
+    }
+
+    #[test]
+    fn it_works() {
+        // TODO: まともなテストを書く
+        let mut lattice = create_lattice();
         lattice.calculate_path_costs(vec![vec![]]);
-        assert_eq!(lattice.lattice[8].get(0).unwrap().path_cost, 0);
-        assert_eq!(lattice.lattice[8].get(1).unwrap().path_cost, 1);
+        assert_eq!(lattice.lattice[8].0.get(0).unwrap().path_cost, 0);
+        assert_eq!(lattice.lattice[8].0.get(1).unwrap().path_cost, 0);
     }
 }
