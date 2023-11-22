@@ -67,10 +67,32 @@ impl Node {
     }
 }
 
+#[derive(Serialize, Clone, Debug)]
+struct Segment(Vec<Node>);
+
+impl Segment {
+    fn add(&mut self, node: Node) {
+        self.0.push(node);
+    }
+
+    fn get(&self, index: usize) -> Option<&Node> {
+        self.0.get(index)
+    }
+}
+
+impl IntoIterator for Segment {
+    type Item = Node;
+    type IntoIter = std::vec::IntoIter<Self::Item>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.0.into_iter()
+    }
+}
+
 #[derive(Serialize)]
 pub struct Lattice {
     sentence: String,
-    lattice: Vec<Vec<Node>>,
+    lattice: Vec<Segment>,
 }
 
 impl Lattice {
@@ -81,7 +103,7 @@ impl Lattice {
         // TODO: write logic to create lattice
         let lattice = Lattice {
             sentence: sentence.to_string(),
-            lattice: vec![vec![]],
+            lattice: vec![Segment(vec![])],
         };
         lattice
     }
@@ -96,10 +118,10 @@ impl Lattice {
         for i in 1..self.lattice.len() {
             let previous_nodes = &self.lattice[i - 1].clone();
             let current_nodes = &mut self.lattice[i];
-            for current_node in current_nodes {
+            for mut current_node in current_nodes.clone().into_iter() {
                 let min_cost_path = previous_nodes
-                    .iter()
-                    .cloned()
+                    .clone()
+                    .into_iter()
                     .map(|previous_node| {
                         // TODO: コストを適切に取得する
                         // default cost is 0
@@ -121,7 +143,7 @@ impl Lattice {
     }
 
     fn add_node(&mut self, node: Node, position: usize) {
-        self.lattice[position].push(node);
+        self.lattice[position].add(node);
     }
 }
 
@@ -135,7 +157,7 @@ mod tests {
         // cooha be waki seme tumen cooha be unggifi tosoho. (満文老檔 1 p. 1)
         let mut lattice = Lattice {
             sentence: "cooha be waki seme tumen cooha be unggifi tosoho.".to_string(),
-            lattice: vec![vec![]; 11],
+            lattice: vec![Segment(vec![]); 11],
         };
         lattice.add_node(
             Node {
@@ -334,7 +356,7 @@ mod tests {
             8,
         );
         lattice.calculate_path_costs(vec![vec![]]);
-        assert_eq!(lattice.lattice[8][0].path_cost, 0);
-        assert_eq!(lattice.lattice[8][1].path_cost, 1);
+        assert_eq!(lattice.lattice[8].get(0).unwrap().path_cost, 0);
+        assert_eq!(lattice.lattice[8].get(1).unwrap().path_cost, 1);
     }
 }
