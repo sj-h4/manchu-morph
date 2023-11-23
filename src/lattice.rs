@@ -1,7 +1,8 @@
 use serde::Serialize;
 
 use crate::{
-    split_clitic::split_word_into_word_clitic, split_suffix::generate_all_segmentations, word::Word,
+    edge_cost::get_edge_cost_map, split_clitic::split_word_into_word_clitic,
+    split_suffix::generate_all_segmentations, word::Word,
 };
 
 #[derive(Clone, Debug, Serialize)]
@@ -19,9 +20,10 @@ struct MorphemeNode {
     /// category id of the node
     ///
     /// The category indicates the part of speech, conjugation, semantic role and so on.
-    category_id: usize,
+    category_id: String,
 }
 
+// TODO: category_id を Word から生成する
 impl From<Word> for MorphemeNode {
     fn from(word: Word) -> Self {
         MorphemeNode {
@@ -29,7 +31,7 @@ impl From<Word> for MorphemeNode {
             emission_cost: 0,
             path_cost: 0,
             left_node: None,
-            category_id: 0,
+            category_id: "".to_string(),
         }
     }
 }
@@ -56,12 +58,13 @@ impl WordNode {
             let word_entry = words[0].base.as_str();
             let all_segmentations = generate_all_segmentations(word_entry, vec![]);
             for segmentation in all_segmentations {
+                // TODO: category_id を適切に設定する
                 let node = MorphemeNode {
                     words: vec![segmentation, words[1].clone()],
                     emission_cost: 0,
                     path_cost: 0,
                     left_node: None,
-                    category_id: 0,
+                    category_id: "".to_string(),
                 };
                 word_node.add(node);
             }
@@ -109,7 +112,8 @@ impl Lattice {
     }
 
     /// Calculate the minimum cost path from the beginning to the end of the lattice.
-    pub fn calculate_path_costs(&mut self, cost_matrix: Vec<Vec<String>>) {
+    pub fn calculate_path_costs(&mut self) {
+        let edge_cost_map = get_edge_cost_map();
         for i in 1..self.lattice.len() {
             let previous_nodes = &self.lattice[i - 1].clone();
             let current_nodes = &mut self.lattice[i];
@@ -118,12 +122,12 @@ impl Lattice {
                     .clone()
                     .into_iter()
                     .map(|previous_node| {
-                        // TODO: コストを適切に取得する
-                        // default cost is 0
-                        //let edge_cost = cost_matrix[previous_node.category_id][current_node.category_id]
-                        //    .parse::<usize>()
-                        //    .unwrap_or(0);
-                        let edge_cost = 0;
+                        let edge_cost = edge_cost_map
+                            .get(&(
+                                previous_node.category_id.clone(),
+                                current_node.category_id.clone(),
+                            ))
+                            .unwrap_or(&0);
                         let path_cost =
                             previous_node.path_cost + current_node.emission_cost + edge_cost;
                         (path_cost, previous_node)
@@ -143,7 +147,7 @@ mod tests {
     use std::vec;
 
     use super::*;
-    use crate::word::{self, Conjugation, PartOfSpeech, Suffix, SuffixRole};
+    use crate::word::{Conjugation, PartOfSpeech, Suffix, SuffixRole};
 
     fn create_lattice() -> Lattice {
         // cooha be waki seme tumen cooha be unggifi tosoho. (満文老檔 1 p. 1)
@@ -160,7 +164,7 @@ mod tests {
                 emission_cost: 0,
                 path_cost: 0,
                 left_node: None,
-                category_id: 0,
+                category_id: "".to_string(),
             },
             MorphemeNode {
                 words: vec![Word {
@@ -178,7 +182,7 @@ mod tests {
                 emission_cost: 0,
                 path_cost: 0,
                 left_node: None,
-                category_id: 0,
+                category_id: "".to_string(),
             },
         ]);
         let word_node_1 = WordNode(vec![MorphemeNode {
@@ -192,7 +196,7 @@ mod tests {
             emission_cost: 0,
             path_cost: 0,
             left_node: None,
-            category_id: 0,
+            category_id: "".to_string(),
         }]);
         let word_node_2 = WordNode(vec![MorphemeNode {
             words: vec![Word {
@@ -205,7 +209,7 @@ mod tests {
             emission_cost: 0,
             path_cost: 0,
             left_node: None,
-            category_id: 0,
+            category_id: "".to_string(),
         }]);
         let word_node_3 = WordNode(vec![MorphemeNode {
             words: vec![Word {
@@ -218,7 +222,7 @@ mod tests {
             emission_cost: 0,
             path_cost: 0,
             left_node: None,
-            category_id: 0,
+            category_id: "".to_string(),
         }]);
         let word_node_4 = WordNode(vec![MorphemeNode {
             words: vec![Word {
@@ -231,7 +235,7 @@ mod tests {
             emission_cost: 0,
             path_cost: 0,
             left_node: None,
-            category_id: 0,
+            category_id: "".to_string(),
         }]);
         let word_node_5 = WordNode(vec![
             MorphemeNode {
@@ -245,7 +249,7 @@ mod tests {
                 emission_cost: 0,
                 path_cost: 0,
                 left_node: None,
-                category_id: 0,
+                category_id: "".to_string(),
             },
             MorphemeNode {
                 words: vec![Word {
@@ -263,7 +267,7 @@ mod tests {
                 emission_cost: 0,
                 path_cost: 0,
                 left_node: None,
-                category_id: 0,
+                category_id: "".to_string(),
             },
         ]);
         let word_node_6 = WordNode(vec![MorphemeNode {
@@ -277,7 +281,7 @@ mod tests {
             emission_cost: 0,
             path_cost: 0,
             left_node: None,
-            category_id: 0,
+            category_id: "".to_string(),
         }]);
         let word_node_7 = WordNode(vec![
             MorphemeNode {
@@ -296,7 +300,7 @@ mod tests {
                 emission_cost: 0,
                 path_cost: 0,
                 left_node: None,
-                category_id: 0,
+                category_id: "".to_string(),
             },
             MorphemeNode {
                 words: vec![Word {
@@ -314,7 +318,7 @@ mod tests {
                 emission_cost: 0,
                 path_cost: 0,
                 left_node: None,
-                category_id: 0,
+                category_id: "".to_string(),
             },
         ]);
         let word_node_8 = WordNode(vec![
@@ -329,7 +333,7 @@ mod tests {
                 emission_cost: 0,
                 path_cost: 0,
                 left_node: None,
-                category_id: 0,
+                category_id: 0.to_string(),
             },
             MorphemeNode {
                 words: vec![Word {
@@ -347,7 +351,7 @@ mod tests {
                 emission_cost: 0,
                 path_cost: 0,
                 left_node: None,
-                category_id: 0,
+                category_id: "".to_string(),
             },
             MorphemeNode {
                 words: vec![Word {
@@ -365,7 +369,7 @@ mod tests {
                 emission_cost: 1,
                 path_cost: 0,
                 left_node: None,
-                category_id: 0,
+                category_id: "".to_string(),
             },
         ]);
         let lattice = Lattice {
@@ -389,7 +393,7 @@ mod tests {
     fn it_works() {
         // TODO: まともなテストを書く
         let mut lattice = create_lattice();
-        lattice.calculate_path_costs(vec![vec![]]);
+        lattice.calculate_path_costs();
         assert_eq!(lattice.lattice[8].0.get(0).unwrap().path_cost, 0);
         assert_eq!(lattice.lattice[8].0.get(1).unwrap().path_cost, 0);
     }
