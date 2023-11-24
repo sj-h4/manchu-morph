@@ -20,7 +20,7 @@ struct MorphemeNode {
     /// category id of the node
     ///
     /// The category indicates the part of speech, conjugation, semantic role and so on.
-    category_id: String,
+    category: String,
 }
 
 // TODO: category_id を Word から生成する
@@ -31,7 +31,7 @@ impl From<Word> for MorphemeNode {
             emission_cost: 0,
             path_cost: 0,
             left_node: None,
-            category_id: "".to_string(),
+            category: "".to_string(),
         }
     }
 }
@@ -64,7 +64,7 @@ impl WordNode {
                     emission_cost: 0,
                     path_cost: 0,
                     left_node: None,
-                    category_id: "".to_string(),
+                    category: "".to_string(),
                 };
                 word_node.add(node);
             }
@@ -124,8 +124,8 @@ impl Lattice {
                     .map(|previous_node| {
                         let edge_cost = edge_cost_map
                             .get(&(
-                                previous_node.category_id.clone(),
-                                current_node.category_id.clone(),
+                                previous_node.category.clone(),
+                                current_node.category.clone(),
                             ))
                             .unwrap_or(&0);
                         let path_cost =
@@ -164,7 +164,7 @@ mod tests {
                 emission_cost: 0,
                 path_cost: 0,
                 left_node: None,
-                category_id: "".to_string(),
+                category: "".to_string(),
             },
             MorphemeNode {
                 words: vec![Word {
@@ -182,7 +182,7 @@ mod tests {
                 emission_cost: 0,
                 path_cost: 0,
                 left_node: None,
-                category_id: "".to_string(),
+                category: "".to_string(),
             },
         ]);
         let word_node_1 = WordNode(vec![MorphemeNode {
@@ -196,7 +196,7 @@ mod tests {
             emission_cost: 0,
             path_cost: 0,
             left_node: None,
-            category_id: "".to_string(),
+            category: "".to_string(),
         }]);
         let word_node_2 = WordNode(vec![MorphemeNode {
             words: vec![Word {
@@ -209,7 +209,7 @@ mod tests {
             emission_cost: 0,
             path_cost: 0,
             left_node: None,
-            category_id: "".to_string(),
+            category: "".to_string(),
         }]);
         let word_node_3 = WordNode(vec![MorphemeNode {
             words: vec![Word {
@@ -222,7 +222,7 @@ mod tests {
             emission_cost: 0,
             path_cost: 0,
             left_node: None,
-            category_id: "".to_string(),
+            category: "".to_string(),
         }]);
         let word_node_4 = WordNode(vec![MorphemeNode {
             words: vec![Word {
@@ -235,7 +235,7 @@ mod tests {
             emission_cost: 0,
             path_cost: 0,
             left_node: None,
-            category_id: "".to_string(),
+            category: "".to_string(),
         }]);
         let word_node_5 = WordNode(vec![
             MorphemeNode {
@@ -249,7 +249,7 @@ mod tests {
                 emission_cost: 0,
                 path_cost: 0,
                 left_node: None,
-                category_id: "".to_string(),
+                category: "".to_string(),
             },
             MorphemeNode {
                 words: vec![Word {
@@ -267,7 +267,7 @@ mod tests {
                 emission_cost: 0,
                 path_cost: 0,
                 left_node: None,
-                category_id: "".to_string(),
+                category: "".to_string(),
             },
         ]);
         let word_node_6 = WordNode(vec![MorphemeNode {
@@ -281,7 +281,7 @@ mod tests {
             emission_cost: 0,
             path_cost: 0,
             left_node: None,
-            category_id: "".to_string(),
+            category: "".to_string(),
         }]);
         let word_node_7 = WordNode(vec![
             MorphemeNode {
@@ -300,7 +300,7 @@ mod tests {
                 emission_cost: 0,
                 path_cost: 0,
                 left_node: None,
-                category_id: "".to_string(),
+                category: "".to_string(),
             },
             MorphemeNode {
                 words: vec![Word {
@@ -318,7 +318,7 @@ mod tests {
                 emission_cost: 0,
                 path_cost: 0,
                 left_node: None,
-                category_id: "".to_string(),
+                category: "".to_string(),
             },
         ]);
         let word_node_8 = WordNode(vec![
@@ -333,7 +333,7 @@ mod tests {
                 emission_cost: 0,
                 path_cost: 0,
                 left_node: None,
-                category_id: 0.to_string(),
+                category: 0.to_string(),
             },
             MorphemeNode {
                 words: vec![Word {
@@ -351,7 +351,7 @@ mod tests {
                 emission_cost: 0,
                 path_cost: 0,
                 left_node: None,
-                category_id: "".to_string(),
+                category: "".to_string(),
             },
             MorphemeNode {
                 words: vec![Word {
@@ -369,7 +369,7 @@ mod tests {
                 emission_cost: 1,
                 path_cost: 0,
                 left_node: None,
-                category_id: "".to_string(),
+                category: "".to_string(),
             },
         ]);
         let lattice = Lattice {

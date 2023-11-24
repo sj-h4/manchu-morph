@@ -4,8 +4,8 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 struct EdgeCost {
-    left_category_id: String,
-    right_category_id: String,
+    left_category: String,
+    right_category: String,
     cost: usize,
 }
 
@@ -23,8 +23,8 @@ pub fn get_edge_cost_map() -> HashMap<(String, String), usize> {
     let edge_costs = EdgeCost::vec_load();
     let mut edge_cost_map = HashMap::new();
     for edge_cost in edge_costs {
-        let left_category_id = edge_cost.left_category_id;
-        let right_category_id = edge_cost.right_category_id;
+        let left_category_id = edge_cost.left_category;
+        let right_category_id = edge_cost.right_category;
         let cost = edge_cost.cost;
         edge_cost_map.insert((left_category_id, right_category_id), cost);
     }
