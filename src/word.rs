@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use strum_macros::EnumString;
+use strum_macros::{Display, EnumString};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -10,7 +10,7 @@ pub enum SuffixRole {
     Denominaladjective,
 }
 
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Copy, Debug, Display, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "snake_case")]
 pub enum Conjugation {
     PerfectiveFinite,
@@ -38,7 +38,7 @@ pub enum Conjugation {
     Plural,
 }
 
-#[derive(Clone, Debug, EnumString, PartialEq, Serialize)]
+#[derive(Clone, Debug, Display, EnumString, PartialEq, Serialize)]
 #[strum(serialize_all = "snake_case")]
 pub enum Case {
     Nominative,
@@ -49,14 +49,14 @@ pub enum Case {
     Vocative,
 }
 
-#[derive(Clone, Debug, PartialEq, Serialize)]
+#[derive(Clone, Debug, Display, PartialEq, Serialize)]
 pub enum Detail {
     Conjugation(Conjugation),
     Cases(Vec<Case>),
 }
 
 /// part of speech which suffix attaches to
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Copy, Debug, Display, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "snake_case")]
 pub enum PartOfSpeech {
     Noun,

@@ -1,8 +1,12 @@
+use std::vec;
+
 use serde::Serialize;
 
 use crate::{
-    edge_cost::get_edge_cost_map, split_clitic::split_word_into_word_clitic,
-    split_suffix::generate_all_segmentations, word::Word,
+    edge_cost::get_edge_cost_map,
+    split_clitic::split_word_into_word_clitic,
+    split_suffix::generate_all_segmentations,
+    word::{Detail, Word},
 };
 
 #[derive(Clone, Debug, Serialize)]
@@ -23,16 +27,48 @@ struct MorphemeNode {
     category: String,
 }
 
-// TODO: category_id を Word から生成する
-impl From<Word> for MorphemeNode {
-    fn from(word: Word) -> Self {
+impl MorphemeNode {
+    fn new(words: Vec<Word>, emission_cost: usize, category: String) -> Self {
         MorphemeNode {
-            words: vec![word],
-            emission_cost: 0,
+            words,
+            emission_cost,
             path_cost: 0,
             left_node: None,
-            category: "".to_string(),
+            category,
         }
+    }
+
+    /// Create a list of nodes from a list of words.
+    ///
+    /// The category of the node depends on the detail of the last word.
+    fn vec_from_words(words: Vec<Word>) -> Vec<Self> {
+        let mut morpheme_nodes = vec![];
+        let last_word = words.last().unwrap();
+        let detail = last_word.detail.clone();
+        let category;
+        match detail {
+            Some(detail) => {
+                match detail {
+                    Detail::Conjugation(conjugation) => {
+                        morpheme_nodes.push(MorphemeNode::new(words, 0, conjugation.to_string()))
+                    }
+                    Detail::Cases(cases) => {
+                        for case in cases {
+                            morpheme_nodes.push(MorphemeNode::new(
+                                words.clone(),
+                                0,
+                                case.to_string(),
+                            ));
+                        }
+                    }
+                };
+            }
+            None => {
+                category = last_word.part_of_speech.to_string();
+                morpheme_nodes.push(MorphemeNode::new(words, 0, category));
+            }
+        }
+        morpheme_nodes
     }
 }
 
@@ -45,12 +81,16 @@ impl From<Word> for MorphemeNode {
 struct WordNode(Vec<MorphemeNode>);
 
 impl WordNode {
+    fn add_nodes(&mut self, nodes: Vec<MorphemeNode>) {
+        self.0.extend(nodes);
+    }
+
     fn from_token(token: &str) -> Self {
         let mut word_node = WordNode(vec![]);
         let all_segmentations = generate_all_segmentations(token, vec![]);
         for segmentation in all_segmentations {
-            let node = MorphemeNode::from(segmentation);
-            word_node.add(node);
+            let nodes = MorphemeNode::vec_from_words(vec![segmentation]);
+            word_node.add_nodes(nodes);
         }
 
         let words = split_word_into_word_clitic(token).expect("Cannot split word");
@@ -58,22 +98,11 @@ impl WordNode {
             let word_entry = words[0].base.as_str();
             let all_segmentations = generate_all_segmentations(word_entry, vec![]);
             for segmentation in all_segmentations {
-                // TODO: category_id を適切に設定する
-                let node = MorphemeNode {
-                    words: vec![segmentation, words[1].clone()],
-                    emission_cost: 0,
-                    path_cost: 0,
-                    left_node: None,
-                    category: "".to_string(),
-                };
-                word_node.add(node);
+                let nodes = MorphemeNode::vec_from_words(vec![segmentation]);
+                word_node.add_nodes(nodes);
             }
         }
         word_node
-    }
-
-    fn add(&mut self, node: MorphemeNode) {
-        self.0.push(node);
     }
 }
 
