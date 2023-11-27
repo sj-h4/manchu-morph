@@ -21,13 +21,12 @@ pub fn split_word_into_suffix_base(word: &str) -> Result<Word, String> {
             let base = word[..word.len() - suffix_entry.len()].to_string();
             let suffix = suffix;
             let suffixes = vec![suffix.clone()];
-            let split_word = Word {
+            let split_word = Word::new(
                 base,
-                suffixes: Some(suffixes),
-                part_of_speech: suffix.part_of_speech,
-                detail: Some(Detail::Conjugation(suffix.conjugation)),
-                emission_cost: 0,
-            };
+                Some(suffixes),
+                suffix.part_of_speech,
+                Some(Detail::Conjugation(suffix.conjugation)),
+            );
             return Ok(split_word);
         }
     }

@@ -1,3 +1,4 @@
+mod edge_cost;
 pub mod function_word;
 pub mod lattice;
 pub mod split_clitic;

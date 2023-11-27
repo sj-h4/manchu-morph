@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use strum_macros::EnumString;
+use strum_macros::{Display, EnumString};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -10,8 +10,9 @@ pub enum SuffixRole {
     Denominaladjective,
 }
 
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Copy, Debug, Display, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "snake_case")]
+#[strum(serialize_all = "snake_case")]
 pub enum Conjugation {
     PerfectiveFinite,
     PerfectiveConverb,
@@ -38,7 +39,7 @@ pub enum Conjugation {
     Plural,
 }
 
-#[derive(Clone, Debug, EnumString, PartialEq, Serialize)]
+#[derive(Clone, Debug, Display, EnumString, PartialEq, Serialize)]
 #[strum(serialize_all = "snake_case")]
 pub enum Case {
     Nominative,
@@ -49,15 +50,16 @@ pub enum Case {
     Vocative,
 }
 
-#[derive(Clone, Debug, PartialEq, Serialize)]
+#[derive(Clone, Debug, Display, PartialEq, Serialize)]
 pub enum Detail {
     Conjugation(Conjugation),
     Cases(Vec<Case>),
 }
 
 /// part of speech which suffix attaches to
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Copy, Debug, Display, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "snake_case")]
+#[strum(serialize_all = "snake_case")]
 pub enum PartOfSpeech {
     Noun,
     Verb,
@@ -101,5 +103,25 @@ pub struct Word {
     /// If the word is a clitic, the detail is a list of cases
     /// and if the word is a verb, the detail is a conjugation.
     pub detail: Option<Detail>,
-    pub emission_cost: usize,
+    /// emission cost of the word
+    ///
+    /// Basically, the emission cost is the negative of the number of suffixes.
+    pub emission_cost: isize,
+}
+
+impl Word {
+    pub fn new(
+        base: String,
+        suffixes: Option<Vec<Suffix>>,
+        part_of_speech: PartOfSpeech,
+        detail: Option<Detail>,
+    ) -> Self {
+        Self {
+            base,
+            suffixes: suffixes.clone(),
+            part_of_speech,
+            detail,
+            emission_cost: -1 * suffixes.clone().unwrap_or(vec![]).len() as isize,
+        }
+    }
 }
