@@ -12,6 +12,7 @@ pub enum SuffixRole {
 
 #[derive(Clone, Copy, Debug, Display, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "snake_case")]
+#[strum(serialize_all = "snake_case")]
 pub enum Conjugation {
     PerfectiveFinite,
     PerfectiveConverb,
@@ -58,6 +59,7 @@ pub enum Detail {
 /// part of speech which suffix attaches to
 #[derive(Clone, Copy, Debug, Display, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "snake_case")]
+#[strum(serialize_all = "snake_case")]
 pub enum PartOfSpeech {
     Noun,
     Verb,

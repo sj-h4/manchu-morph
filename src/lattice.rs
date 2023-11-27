@@ -10,7 +10,7 @@ use crate::{
 };
 
 #[derive(Clone, Debug, Serialize)]
-struct MorphemeNode {
+pub struct MorphemeNode {
     /// words in the node
     ///
     /// If the token includes a clitic, the clitic is indexed as a word.
@@ -104,6 +104,10 @@ impl WordNode {
         }
         word_node
     }
+
+    fn put_morpheme_node(&mut self, index: usize, morpheme_node: MorphemeNode) {
+        self.0[index] = morpheme_node;
+    }
 }
 
 impl IntoIterator for WordNode {
@@ -141,13 +145,16 @@ impl Lattice {
     }
 
     /// Calculate the minimum cost path from the beginning to the end of the lattice.
+    // TODO: コストが同じ場合は一番分割してるやつを選ぶようにする
     pub fn calculate_path_costs(&mut self) {
         let edge_cost_map = get_edge_cost_map();
         for i in 1..self.lattice.len() {
-            let previous_nodes = &self.lattice[i - 1].clone();
-            let current_nodes = &mut self.lattice[i];
-            for mut current_node in current_nodes.clone().into_iter() {
-                let min_cost_path = previous_nodes
+            let previous_word_node = &self.lattice[i - 1].clone();
+            let current_word_node = &mut self.lattice[i];
+            for (morpheme_node_index, current_node) in
+                current_word_node.clone().into_iter().enumerate()
+            {
+                let min_cost_path = previous_word_node
                     .clone()
                     .into_iter()
                     .map(|previous_node| {
@@ -163,11 +170,36 @@ impl Lattice {
                     })
                     .min_by_key(|(path_cost, _)| *path_cost);
                 if let Some((path_cost, previous_node)) = min_cost_path {
-                    current_node.path_cost = path_cost;
-                    current_node.left_node = Some(Box::from(previous_node));
+                    let new_morpheme_node = MorphemeNode {
+                        words: current_node.words.clone(),
+                        emission_cost: current_node.emission_cost,
+                        path_cost,
+                        left_node: Some(Box::from(previous_node)),
+                        category: current_node.category.clone(),
+                    };
+                    current_word_node.put_morpheme_node(morpheme_node_index, new_morpheme_node);
                 }
             }
         }
+    }
+
+    pub fn get_min_cost_path(&self) -> Vec<Vec<Word>> {
+        let mut min_cost_path = vec![];
+        let last_word_node = &self.lattice[self.lattice.len() - 1];
+        let mut min_cost_node = last_word_node.0[0].clone();
+        for word_node in last_word_node.0.iter() {
+            if word_node.path_cost < min_cost_node.path_cost {
+                min_cost_node = word_node.clone();
+            }
+        }
+        min_cost_path.push(min_cost_node.words.clone());
+        let mut left_node = min_cost_node.left_node.clone();
+        while let Some(node) = left_node {
+            min_cost_path.push(node.words.clone());
+            left_node = node.left_node.clone();
+        }
+        min_cost_path.reverse();
+        min_cost_path
     }
 }
 
@@ -446,5 +478,13 @@ mod tests {
             word_node_cooha.0[1].words[0].suffixes.as_ref().unwrap()[0].suffix,
             "ha"
         );
+    }
+
+    #[test]
+    fn test_get_min_cost_path() {
+        let mut lattice = Lattice::from_sentence("wesimbuhe bithe");
+        lattice.calculate_path_costs();
+        let min_cost_path = lattice.get_min_cost_path();
+        println!("{:?}", min_cost_path);
     }
 }
