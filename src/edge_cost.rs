@@ -6,7 +6,7 @@ use serde::Deserialize;
 struct EdgeCost {
     left_category: String,
     right_category: String,
-    cost: usize,
+    cost: isize,
 }
 
 impl EdgeCost {
@@ -19,7 +19,7 @@ impl EdgeCost {
     }
 }
 
-pub fn get_edge_cost_map() -> HashMap<(String, String), usize> {
+pub fn get_edge_cost_map() -> HashMap<(String, String), isize> {
     let edge_costs = EdgeCost::vec_load();
     let mut edge_cost_map = HashMap::new();
     for edge_cost in edge_costs {

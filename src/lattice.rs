@@ -16,9 +16,9 @@ pub struct MorphemeNode {
     /// If the token includes a clitic, the clitic is indexed as a word.
     /// For example, "niyalmai" is indexed as `vec!["niyalma", "i"]`.
     words: Vec<Word>,
-    emission_cost: usize,
+    emission_cost: isize,
     /// minimum cost of path from the beginning to the node
-    path_cost: usize,
+    path_cost: isize,
     /// left node of the node in the path with the minimum cost
     left_node: Option<Box<MorphemeNode>>,
     /// category id of the node
@@ -28,7 +28,7 @@ pub struct MorphemeNode {
 }
 
 impl MorphemeNode {
-    fn new(words: Vec<Word>, emission_cost: usize, category: String) -> Self {
+    fn new(words: Vec<Word>, emission_cost: isize, category: String) -> Self {
         MorphemeNode {
             words,
             emission_cost,
@@ -43,20 +43,24 @@ impl MorphemeNode {
     /// The category of the node depends on the detail of the last word.
     fn vec_from_words(words: Vec<Word>) -> Vec<Self> {
         let mut morpheme_nodes = vec![];
+        // calculate emmision cost
+        let emision_cost = words.iter().map(|word| word.emission_cost).sum::<isize>();
         let last_word = words.last().unwrap();
         let detail = last_word.detail.clone();
         let category;
         match detail {
             Some(detail) => {
                 match detail {
-                    Detail::Conjugation(conjugation) => {
-                        morpheme_nodes.push(MorphemeNode::new(words, 0, conjugation.to_string()))
-                    }
+                    Detail::Conjugation(conjugation) => morpheme_nodes.push(MorphemeNode::new(
+                        words,
+                        emision_cost,
+                        conjugation.to_string(),
+                    )),
                     Detail::Cases(cases) => {
                         for case in cases {
                             morpheme_nodes.push(MorphemeNode::new(
                                 words.clone(),
-                                0,
+                                emision_cost,
                                 case.to_string(),
                             ));
                         }
@@ -478,13 +482,5 @@ mod tests {
             word_node_cooha.0[1].words[0].suffixes.as_ref().unwrap()[0].suffix,
             "ha"
         );
-    }
-
-    #[test]
-    fn test_get_min_cost_path() {
-        let mut lattice = Lattice::from_sentence("wesimbuhe bithe");
-        lattice.calculate_path_costs();
-        let min_cost_path = lattice.get_min_cost_path();
-        println!("{:?}", min_cost_path);
     }
 }

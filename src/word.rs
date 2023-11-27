@@ -103,5 +103,25 @@ pub struct Word {
     /// If the word is a clitic, the detail is a list of cases
     /// and if the word is a verb, the detail is a conjugation.
     pub detail: Option<Detail>,
-    pub emission_cost: usize,
+    /// emission cost of the word
+    ///
+    /// Basically, the emission cost is the negative of the number of suffixes.
+    pub emission_cost: isize,
+}
+
+impl Word {
+    pub fn new(
+        base: String,
+        suffixes: Option<Vec<Suffix>>,
+        part_of_speech: PartOfSpeech,
+        detail: Option<Detail>,
+    ) -> Self {
+        Self {
+            base,
+            suffixes: suffixes.clone(),
+            part_of_speech,
+            detail,
+            emission_cost: -1 * suffixes.clone().unwrap_or(vec![]).len() as isize,
+        }
+    }
 }
