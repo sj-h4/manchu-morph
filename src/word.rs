@@ -39,7 +39,7 @@ pub enum Conjugation {
     Plural,
 }
 
-#[derive(Clone, Debug, Display, EnumString, PartialEq, Serialize)]
+#[derive(Clone, Debug, Display, EnumString, PartialEq, Serialize, Deserialize)]
 #[strum(serialize_all = "snake_case")]
 pub enum Case {
     Nominative,
@@ -50,10 +50,11 @@ pub enum Case {
     Vocative,
 }
 
-#[derive(Clone, Debug, Display, PartialEq, Serialize)]
+#[derive(Clone, Debug, Display, PartialEq, Serialize, Deserialize)]
 pub enum Detail {
     Conjugation(Conjugation),
-    Cases(Vec<Case>),
+    Case(Case),
+    Other(String),
 }
 
 /// part of speech which suffix attaches to
@@ -86,7 +87,7 @@ pub struct Suffix {
     pub part_of_speech: PartOfSpeech,
 }
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Word {
     /// base of the word
     ///
