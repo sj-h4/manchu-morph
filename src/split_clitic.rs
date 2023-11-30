@@ -40,7 +40,7 @@ impl Into<Word> for CaseClitic {
             suffixes: None,
             part_of_speech: PartOfSpeech::Clitic,
             detail: Some(Detail::Cases(self.cases)),
-            emission_cost: 0,
+            emission_cost: -1,
         }
     }
 }
@@ -66,7 +66,7 @@ pub fn split_word_into_word_clitic(word: &str) -> Result<Vec<Word>, String> {
         if word.ends_with(clitic_entry) {
             let base = word[..word.len() - clitic_entry.len()].to_string();
             if base.is_empty() {
-                return Ok(vec![case_clitic.into()]);
+                return Err("Empty base".into());
             }
             let split_words = vec![
                 Word {
@@ -81,13 +81,7 @@ pub fn split_word_into_word_clitic(word: &str) -> Result<Vec<Word>, String> {
             return Ok(split_words);
         }
     }
-    Ok(vec![Word {
-        base: word.to_string(),
-        suffixes: None,
-        part_of_speech: PartOfSpeech::Unknown,
-        detail: None,
-        emission_cost: 0,
-    }])
+    Err("Cannot find a clitic".into())
 }
 
 #[cfg(test)]

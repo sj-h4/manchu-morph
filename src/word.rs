@@ -54,6 +54,7 @@ pub enum Case {
 pub enum Detail {
     Conjugation(Conjugation),
     Cases(Vec<Case>),
+    Other(String),
 }
 
 /// part of speech which suffix attaches to

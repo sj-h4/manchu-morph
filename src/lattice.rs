@@ -4,6 +4,7 @@ use serde::Serialize;
 
 use crate::{
     edge_cost::get_edge_cost_map,
+    function_word::get_function_word_list,
     split_clitic::split_word_into_word_clitic,
     split_suffix::generate_all_segmentations,
     word::{Detail, Word},
@@ -65,6 +66,9 @@ impl MorphemeNode {
                             ));
                         }
                     }
+                    Detail::Other(other) => {
+                        morpheme_nodes.push(MorphemeNode::new(words, emision_cost, other));
+                    }
                 };
             }
             None => {
@@ -97,8 +101,9 @@ impl WordNode {
             word_node.add_nodes(nodes);
         }
 
-        let words = split_word_into_word_clitic(token).expect("Cannot split word");
-        if words.len() == 2 {
+        // if the token includes a clitic, the clitic is indexed as a word
+        let words_result = split_word_into_word_clitic(token);
+        if let Ok(words) = words_result {
             let word_entry = words[0].base.as_str();
             let all_segmentations = generate_all_segmentations(word_entry, vec![]);
             for segmentation in all_segmentations {
@@ -106,6 +111,11 @@ impl WordNode {
                 word_node.add_nodes(nodes);
             }
         }
+
+        // if the token is a function word, the function word is indexed as a word
+        let function_word = get_function_word_list()
+            .iter()
+            .find(|function_word| function_word.entry == token);
         word_node
     }
 
