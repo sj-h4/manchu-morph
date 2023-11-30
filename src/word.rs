@@ -53,7 +53,7 @@ pub enum Case {
 #[derive(Clone, Debug, Display, PartialEq, Serialize, Deserialize)]
 pub enum Detail {
     Conjugation(Conjugation),
-    Cases(Vec<Case>),
+    Case(Case),
     Other(String),
 }
 

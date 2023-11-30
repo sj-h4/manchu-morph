@@ -33,23 +33,28 @@ impl TryFrom<FunctionWord> for CaseClitic {
     }
 }
 
-impl Into<Word> for CaseClitic {
-    fn into(self) -> Word {
-        Word {
-            base: self.entry,
-            suffixes: None,
-            part_of_speech: PartOfSpeech::Clitic,
-            detail: Some(Detail::Cases(self.cases)),
-            emission_cost: -1,
-        }
+impl Into<Vec<Word>> for CaseClitic {
+    fn into(self) -> Vec<Word> {
+        let words = self
+            .cases
+            .iter()
+            .map(|case| Word {
+                base: self.entry.clone(),
+                suffixes: None,
+                part_of_speech: PartOfSpeech::Clitic,
+                detail: Some(Detail::Case(case.clone())),
+                emission_cost: -1,
+            })
+            .collect();
+        words
     }
 }
 
-/// Split a word into a word and a clitic.
+/// Split a word into a word and a clitic and return (word, clitic)
 ///
 /// The word is not be fully split into a word and suffixes;
 /// the field `suffixes` of the returned `Word` is `None`.
-pub fn split_word_into_word_clitic(word: &str) -> Result<Vec<Word>, String> {
+pub fn split_word_into_word_clitic(word: &str) -> Result<(String, Vec<Word>), String> {
     let function_words = get_function_word_list();
     if word.is_empty() {
         return Err("Empty string".into());
@@ -68,17 +73,8 @@ pub fn split_word_into_word_clitic(word: &str) -> Result<Vec<Word>, String> {
             if base.is_empty() {
                 return Err("Empty base".into());
             }
-            let split_words = vec![
-                Word {
-                    base,
-                    suffixes: None,
-                    part_of_speech: PartOfSpeech::Unknown,
-                    detail: None,
-                    emission_cost: 0,
-                },
-                case_clitic.into(),
-            ];
-            return Ok(split_words);
+            let case_clitic_words: Vec<Word> = case_clitic.into();
+            return Ok((base, case_clitic_words));
         }
     }
     Err("Cannot find a clitic".into())
@@ -91,13 +87,8 @@ mod tests {
     #[test]
     fn test_split_word_into_word_clitic() {
         let word = "niyalmai";
-        let split_words = split_word_into_word_clitic(word).unwrap();
-        assert_eq!(split_words.len(), 2);
-        assert_eq!(split_words[0].base, "niyalma");
-        assert_eq!(split_words[1].base, "i");
-        assert_eq!(
-            split_words[1].detail,
-            Some(Detail::Cases(vec![Case::Genitive, Case::Nominative]))
-        );
+        let (word_entry, case_clitic) = split_word_into_word_clitic(word).unwrap();
+        assert_eq!(word_entry, "niyalma");
+        assert_eq!(case_clitic[0].base, "i");
     }
 }

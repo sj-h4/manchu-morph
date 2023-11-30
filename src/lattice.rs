@@ -39,11 +39,14 @@ impl MorphemeNode {
         }
     }
 
-    /// Create a list of nodes from a list of words.
+    /// Create a node from a list of words.
+    ///
+    /// The argument `words` has multiple words if the token includes a clitic.
+    /// If not, the argument `words` has only one word.
     ///
     /// The category of the node depends on the detail of the last word.
-    fn vec_from_words(words: Vec<Word>) -> Vec<Self> {
-        let mut morpheme_nodes = vec![];
+    fn from_words(words: Vec<Word>) -> Self {
+        let morpheme_node;
         // calculate emmision cost
         let emision_cost = words.iter().map(|word| word.emission_cost).sum::<isize>();
         let last_word = words.last().unwrap();
@@ -52,31 +55,25 @@ impl MorphemeNode {
         match detail {
             Some(detail) => {
                 match detail {
-                    Detail::Conjugation(conjugation) => morpheme_nodes.push(MorphemeNode::new(
-                        words,
-                        emision_cost,
-                        conjugation.to_string(),
-                    )),
-                    Detail::Cases(cases) => {
-                        for case in cases {
-                            morpheme_nodes.push(MorphemeNode::new(
-                                words.clone(),
-                                emision_cost,
-                                case.to_string(),
-                            ));
-                        }
+                    Detail::Conjugation(conjugation) => {
+                        morpheme_node =
+                            MorphemeNode::new(words, emision_cost, conjugation.to_string())
+                    }
+                    Detail::Case(case) => {
+                        morpheme_node =
+                            MorphemeNode::new(words.clone(), emision_cost, case.to_string())
                     }
                     Detail::Other(other) => {
-                        morpheme_nodes.push(MorphemeNode::new(words, emision_cost, other));
+                        morpheme_node = MorphemeNode::new(words, emision_cost, other);
                     }
                 };
             }
             None => {
                 category = last_word.part_of_speech.to_string();
-                morpheme_nodes.push(MorphemeNode::new(words, 0, category));
+                morpheme_node = MorphemeNode::new(words, 0, category);
             }
         }
-        morpheme_nodes
+        morpheme_node
     }
 }
 
@@ -89,6 +86,10 @@ impl MorphemeNode {
 struct WordNode(Vec<MorphemeNode>);
 
 impl WordNode {
+    fn add_node(&mut self, node: MorphemeNode) {
+        self.0.push(node);
+    }
+
     fn add_nodes(&mut self, nodes: Vec<MorphemeNode>) {
         self.0.extend(nodes);
     }
@@ -97,26 +98,30 @@ impl WordNode {
         let mut word_node = WordNode(vec![]);
         let all_segmentations = generate_all_segmentations(token, vec![]);
         for segmentation in all_segmentations {
-            let nodes = MorphemeNode::vec_from_words(vec![segmentation]);
-            word_node.add_nodes(nodes);
+            let nodes = MorphemeNode::from_words(vec![segmentation]);
+            word_node.add_node(nodes);
         }
 
         // if the token includes a clitic, the clitic is indexed as a word
-        let words_result = split_word_into_word_clitic(token);
-        if let Ok(words) = words_result {
-            let word_entry = words[0].base.as_str();
-            let all_segmentations = generate_all_segmentations(word_entry, vec![]);
+        if let Ok((word_entry, case_clitics)) = split_word_into_word_clitic(token) {
+            let all_segmentations = generate_all_segmentations(word_entry.as_str(), vec![]);
             for segmentation in all_segmentations {
-                let nodes = MorphemeNode::vec_from_words(vec![segmentation]);
-                word_node.add_nodes(nodes);
+                for case_clitic in case_clitics.iter() {
+                    let nodes =
+                        MorphemeNode::from_words(vec![segmentation.clone(), case_clitic.clone()]);
+                    word_node.add_node(nodes);
+                }
             }
         }
 
         // if the token is a function word, the function word is indexed as a word
         if let Ok(function_word) = token.parse::<FunctionWord>() {
             let words: Vec<Word> = function_word.into();
-            let morph_nodes = MorphemeNode::vec_from_words(words);
-            word_node.add_nodes(morph_nodes);
+            let nodes: Vec<MorphemeNode> = words
+                .iter()
+                .map(|word| MorphemeNode::from_words(vec![word.clone()]))
+                .collect();
+            word_node.add_nodes(nodes);
         }
         word_node
     }

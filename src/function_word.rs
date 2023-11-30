@@ -25,6 +25,7 @@ impl FromStr for FunctionWord {
 }
 
 impl Into<Vec<Word>> for FunctionWord {
+    // when a function word has some details, create a word for each detail
     fn into(self) -> Vec<Word> {
         let mut words = vec![];
 
@@ -36,14 +37,17 @@ impl Into<Vec<Word>> for FunctionWord {
                 .collect();
             match cases {
                 Ok(cases) => {
-                    let word = Word {
-                        base: self.entry,
-                        suffixes: None,
-                        part_of_speech: PartOfSpeech::Clitic,
-                        detail: Some(Detail::Cases(cases)),
-                        emission_cost: -1,
-                    };
-                    words.push(word);
+                    let case_words: Vec<Word> = cases
+                        .iter()
+                        .map(|case| Word {
+                            base: self.entry.clone(),
+                            suffixes: None,
+                            part_of_speech: PartOfSpeech::Clitic,
+                            detail: Some(Detail::Case(case.clone())),
+                            emission_cost: -1,
+                        })
+                        .collect();
+                    words.extend(case_words);
                 }
                 Err(_) => {
                     println!("Invalid case");
