@@ -7,6 +7,6 @@ fn main() {
 
     let min_cost_path = lattice.get_min_cost_path();
     let json_str = serde_json::to_string(&min_cost_path).unwrap();
-    //println!("{}", json_str);
-    println!("{}", lattice_json)
+    println!("{}", json_str);
+    //println!("{}", lattice_json)
 }

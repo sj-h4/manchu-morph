@@ -4,7 +4,7 @@ use serde::Serialize;
 
 use crate::{
     edge_cost::get_edge_cost_map,
-    function_word::get_function_word_list,
+    function_word::FunctionWord,
     split_clitic::split_word_into_word_clitic,
     split_suffix::generate_all_segmentations,
     word::{Detail, Word},
@@ -113,9 +113,11 @@ impl WordNode {
         }
 
         // if the token is a function word, the function word is indexed as a word
-        let function_word = get_function_word_list()
-            .iter()
-            .find(|function_word| function_word.entry == token);
+        if let Ok(function_word) = token.parse::<FunctionWord>() {
+            let words: Vec<Word> = function_word.into();
+            let morph_nodes = MorphemeNode::vec_from_words(words);
+            word_node.add_nodes(morph_nodes);
+        }
         word_node
     }
 

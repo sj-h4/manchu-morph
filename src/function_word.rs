@@ -12,6 +12,7 @@ pub struct FunctionWord {
 
 impl FromStr for FunctionWord {
     type Err = String;
+
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let function_words = get_function_word_list();
         for function_word in function_words.iter() {
