@@ -39,6 +39,23 @@ pub fn is_valid_structure(token: &str) -> bool {
     }
 }
 
+pub fn is_unusual_final_consonant(token: &str) -> bool {
+    let result = token.convert_to_manchu();
+    let Ok(manchu_token) = result else {
+        return false;
+    };
+    let graphemes = manchu_token.graphemes(true).collect::<Vec<&str>>();
+    let len = graphemes.len();
+    if len == 0 {
+        return false;
+    }
+    let unusual_final_consonants = ["b", "t", "k", "m", "ng", "l", "r", "s"]
+        .iter()
+        .map(|x| x.convert_to_manchu().unwrap())
+        .collect::<Vec<String>>();
+    unusual_final_consonants.contains(&graphemes[len - 1].to_string())
+}
+
 fn is_vowel(char: &str) -> bool {
     let vowels = ["a", "e", "i", "o", "u", "v"]
         .iter()

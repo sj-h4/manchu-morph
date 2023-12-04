@@ -5,9 +5,10 @@ use serde::Serialize;
 use crate::{
     edge_cost::get_edge_cost_map,
     function_word::FunctionWord,
+    phoneme::is_unusual_final_consonant,
     split_clitic::split_word_into_word_clitic,
     split_suffix::generate_all_segmentations,
-    word::{Detail, Word},
+    word::{Detail, PartOfSpeech, Word},
 };
 
 #[derive(Clone, Debug, Serialize)]
@@ -96,6 +97,20 @@ impl WordNode {
 
     fn from_token(token: &str) -> Self {
         let mut word_node = WordNode(vec![]);
+        // If the token ends with an unusual final consonant, it is considered a noun.
+        if is_unusual_final_consonant(&token) {
+            let words = vec![Word {
+                base: token.to_string(),
+                suffixes: None,
+                part_of_speech: PartOfSpeech::Noun,
+                detail: None,
+                emission_cost: 0,
+            }];
+            let morpheme_node = MorphemeNode::from_words(words);
+            word_node.add_node(morpheme_node);
+            return word_node;
+        }
+
         let all_segmentations = generate_all_segmentations(token, vec![]);
         for segmentation in all_segmentations {
             let nodes = MorphemeNode::from_words(vec![segmentation]);
