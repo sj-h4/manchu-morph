@@ -39,14 +39,6 @@ pub fn is_valid_structure(token: &str) -> bool {
     }
 }
 
-fn convert_manchu_char(text: &str) -> Result<String, String> {
-    let result = text.convert_to_manchu();
-    match result {
-        Ok(text) => Ok(text),
-        Err(err) => Err(err),
-    }
-}
-
 fn is_vowel(char: &str) -> bool {
     let vowels = ["a", "e", "i", "o", "u", "v"]
         .iter()

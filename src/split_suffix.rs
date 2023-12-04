@@ -1,6 +1,9 @@
 use core::panic;
 
-use crate::word::{Detail, PartOfSpeech, Suffix, Word};
+use crate::{
+    phoneme::is_valid_structure,
+    word::{Detail, PartOfSpeech, Suffix, Word},
+};
 
 /// Spilt a word into a suffix and its base.
 ///
@@ -19,7 +22,11 @@ pub fn split_word_into_suffix_base(word: &str) -> Result<Word, String> {
         let suffix_entry = suffix.suffix.as_str();
         if word.ends_with(suffix_entry) {
             let base = word[..word.len() - suffix_entry.len()].to_string();
-            let suffix = suffix;
+            // Skip if the base is not a valid phoneme structure.
+            if !is_valid_structure(&base) {
+                continue;
+            }
+
             let suffixes = vec![suffix.clone()];
             let split_word = Word::new(
                 base,
