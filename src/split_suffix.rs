@@ -60,7 +60,18 @@ pub fn generate_all_segmentations(token: &str, mut words: Vec<Word>) -> Vec<Word
     }
     let segmented_word = split_word_into_suffix_base(token).expect("Error splitting word");
     match segmented_word.suffixes {
-        Some(_) => {
+        Some(suffixes) => {
+            let mut suffixes = suffixes.clone();
+            let previous_suffix = words[words.len() - 1].suffixes.clone().unwrap_or(vec![]);
+            suffixes.extend(previous_suffix);
+
+            let segmented_word = Word::new(
+                segmented_word.base,
+                Some(suffixes),
+                segmented_word.part_of_speech,
+                segmented_word.detail,
+            );
+
             words.push(segmented_word.clone());
             let base = segmented_word.base;
             generate_all_segmentations(&base, words)
