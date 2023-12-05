@@ -181,7 +181,6 @@ impl Lattice {
     }
 
     /// Calculate the minimum cost path from the beginning to the end of the lattice.
-    // TODO: コストが同じ場合は一番分割してるやつを選ぶようにする
     pub fn calculate_path_costs(&mut self) {
         let edge_cost_map = get_edge_cost_map();
         for i in 1..self.lattice.len() {
