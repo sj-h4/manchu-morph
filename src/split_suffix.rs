@@ -1,6 +1,9 @@
 use core::panic;
 
-use crate::word::{Detail, PartOfSpeech, Suffix, Word};
+use crate::{
+    phoneme::is_valid_structure,
+    word::{Detail, PartOfSpeech, Suffix, Word},
+};
 
 /// Spilt a word into a suffix and its base.
 ///
@@ -19,7 +22,11 @@ pub fn split_word_into_suffix_base(word: &str) -> Result<Word, String> {
         let suffix_entry = suffix.suffix.as_str();
         if word.ends_with(suffix_entry) {
             let base = word[..word.len() - suffix_entry.len()].to_string();
-            let suffix = suffix;
+            // Skip if the base is not a valid phoneme structure.
+            if !is_valid_structure(&base) {
+                continue;
+            }
+
             let suffixes = vec![suffix.clone()];
             let split_word = Word::new(
                 base,
@@ -53,7 +60,18 @@ pub fn generate_all_segmentations(token: &str, mut words: Vec<Word>) -> Vec<Word
     }
     let segmented_word = split_word_into_suffix_base(token).expect("Error splitting word");
     match segmented_word.suffixes {
-        Some(_) => {
+        Some(suffixes) => {
+            let mut suffixes = suffixes.clone();
+            let previous_suffix = words[words.len() - 1].suffixes.clone().unwrap_or(vec![]);
+            suffixes.extend(previous_suffix);
+
+            let segmented_word = Word::new(
+                segmented_word.base,
+                Some(suffixes),
+                segmented_word.part_of_speech,
+                segmented_word.detail,
+            );
+
             words.push(segmented_word.clone());
             let base = segmented_word.base;
             generate_all_segmentations(&base, words)
