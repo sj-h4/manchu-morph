@@ -127,7 +127,7 @@ impl Word {
         }
     }
 
-    pub fn to_manchu_letters(&self) -> Self {
+    pub fn to_manchu_letters(&mut self) {
         let base = self
             .base
             .clone()
@@ -155,12 +155,7 @@ impl Word {
                 suffixes = None;
             }
         };
-        Self {
-            base,
-            suffixes,
-            part_of_speech: self.part_of_speech,
-            detail: self.detail.clone(),
-            emission_cost: self.emission_cost,
-        }
+        self.base = base;
+        self.suffixes = suffixes;
     }
 }

@@ -1,5 +1,6 @@
 use std::vec;
 
+use manchu_converter::ManchuConverter;
 use serde::Serialize;
 
 use crate::{
@@ -182,6 +183,10 @@ impl Lattice {
 
     /// Convert to Manchu letters.
     pub fn to_manchu_letters(&mut self) {
+        self.sentence = self
+            .sentence
+            .convert_to_manchu()
+            .expect("cannot convert to manchu");
         for word_node in self.lattice.iter_mut() {
             for morpheme_node in word_node.0.iter_mut() {
                 for word in morpheme_node.words.iter_mut() {
