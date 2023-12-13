@@ -6,6 +6,11 @@
   },
   {
     "left_category": "genitive",
+    "right_category": "perfective_participle",
+    "cost": 4
+  },
+  {
+    "left_category": "genitive",
     "right_category": "noun",
     "cost": -5
   }

@@ -180,6 +180,17 @@ impl Lattice {
         serde_json::to_string(&self)
     }
 
+    /// Convert to Manchu letters.
+    pub fn to_manchu_letters(&mut self) {
+        for word_node in self.lattice.iter_mut() {
+            for morpheme_node in word_node.0.iter_mut() {
+                for word in morpheme_node.words.iter_mut() {
+                    word.to_manchu_letters();
+                }
+            }
+        }
+    }
+
     /// Calculate the minimum cost path from the beginning to the end of the lattice.
     pub fn calculate_path_costs(&mut self) {
         let edge_cost_map = get_edge_cost_map();
