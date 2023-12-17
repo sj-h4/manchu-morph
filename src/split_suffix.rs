@@ -81,24 +81,18 @@ pub fn generate_all_segmentations(token: &str, mut words: Vec<Word>) -> Vec<Word
 }
 
 fn read_suffix_csv() -> Vec<Suffix> {
-    let rdr = csv::Reader::from_path("./resources/suffix.csv");
-    match rdr {
-        Ok(mut rdr) => {
-            let mut suffixes = Vec::new();
-            for result in rdr.deserialize() {
-                if let Ok(result) = result {
-                    let suffix: Suffix = result;
-                    suffixes.push(suffix);
-                } else {
-                    panic!("{}", result.unwrap_err());
-                }
-            }
-            suffixes
-        }
-        Err(e) => {
-            panic!("{}", e);
+    let csv = include_str!("../resources/suffix.csv");
+    let mut rdr = csv::Reader::from_reader(csv.as_bytes());
+    let mut suffixes = Vec::new();
+    for result in rdr.deserialize() {
+        if let Ok(result) = result {
+            let suffix: Suffix = result;
+            suffixes.push(suffix);
+        } else {
+            panic!("{}", result.unwrap_err());
         }
     }
+    suffixes
 }
 
 #[cfg(test)]
