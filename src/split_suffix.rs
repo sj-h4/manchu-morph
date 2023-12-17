@@ -64,12 +64,14 @@ pub fn generate_all_segmentations(token: &str, mut words: Vec<Word>) -> Vec<Word
             let mut suffixes = suffixes.clone();
             let previous_suffix = words[words.len() - 1].suffixes.clone().unwrap_or(vec![]);
             suffixes.extend(previous_suffix);
+            let conjugation = suffixes.last().unwrap().conjugation.clone();
+            let part_of_speech = suffixes.last().unwrap().part_of_speech.clone();
 
             let segmented_word = Word::new(
                 segmented_word.base,
                 Some(suffixes),
-                segmented_word.part_of_speech,
-                segmented_word.detail,
+                part_of_speech,
+                Some(Detail::Conjugation(conjugation)),
             );
 
             words.push(segmented_word.clone());
