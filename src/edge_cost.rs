@@ -11,7 +11,7 @@ struct EdgeCost {
 
 impl EdgeCost {
     fn vec_load() -> Vec<EdgeCost> {
-        let cost_path = "resources/edge_cost.json";
+        let cost_path = "./resources/edge_cost.json";
         let data = fs::read_to_string(cost_path).expect("Unable to read file");
         let edge_costs: Vec<EdgeCost> =
             serde_json::from_str(&data).expect("JSON was not well-formatted");
