@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fs};
+use std::collections::HashMap;
 
 use serde::Deserialize;
 
@@ -11,10 +11,9 @@ struct EdgeCost {
 
 impl EdgeCost {
     fn vec_load() -> Vec<EdgeCost> {
-        let cost_path = "./resources/edge_cost.json";
-        let data = fs::read_to_string(cost_path).expect("Unable to read file");
+        let data = include_str!("../resources/edge_cost.json");
         let edge_costs: Vec<EdgeCost> =
-            serde_json::from_str(&data).expect("JSON was not well-formatted");
+            serde_json::from_str(data).expect("JSON was not well-formatted");
         edge_costs
     }
 }
