@@ -1,7 +1,8 @@
+use manchu_converter::ManchuConverter;
 use serde::{Deserialize, Serialize};
 use strum_macros::{Display, EnumString};
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum SuffixRole {
     Functional,
@@ -122,7 +123,39 @@ impl Word {
             suffixes: suffixes.clone(),
             part_of_speech,
             detail,
-            emission_cost: -6 * suffixes.clone().unwrap_or(vec![]).len() as isize,
+            emission_cost: -5 * suffixes.clone().unwrap_or(vec![]).len() as isize,
         }
+    }
+
+    pub fn to_manchu_letters(&mut self) {
+        let base = self
+            .base
+            .clone()
+            .convert_to_manchu()
+            .expect("cannot convert to manchu");
+        let suffixes: Option<Vec<Suffix>>;
+        match self.suffixes {
+            Some(ref s) => {
+                suffixes = Some(
+                    s.iter()
+                        .map(|suffix| Suffix {
+                            suffix: suffix
+                                .suffix
+                                .clone()
+                                .convert_to_manchu()
+                                .expect("cannot convert to manchu"),
+                            conjugation: suffix.conjugation,
+                            role: suffix.role,
+                            part_of_speech: suffix.part_of_speech,
+                        })
+                        .collect(),
+                );
+            }
+            None => {
+                suffixes = None;
+            }
+        };
+        self.base = base;
+        self.suffixes = suffixes;
     }
 }

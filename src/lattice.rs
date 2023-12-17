@@ -1,11 +1,12 @@
 use std::vec;
 
+use manchu_converter::ManchuConverter;
 use serde::Serialize;
 
 use crate::{
     edge_cost::get_edge_cost_map,
     function_word::FunctionWord,
-    phoneme::is_unusual_final_consonant,
+    phoneme::{is_unusual_final_consonant, is_valid_structure},
     split_clitic::split_word_into_word_clitic,
     split_suffix::generate_all_segmentations,
     word::{Detail, PartOfSpeech, Word},
@@ -119,12 +120,16 @@ impl WordNode {
 
         // if the token includes a clitic, the clitic is indexed as a word
         if let Ok((word_entry, case_clitics)) = split_word_into_word_clitic(token) {
-            let all_segmentations = generate_all_segmentations(word_entry.as_str(), vec![]);
-            for segmentation in all_segmentations {
-                for case_clitic in case_clitics.iter() {
-                    let nodes =
-                        MorphemeNode::from_words(vec![segmentation.clone(), case_clitic.clone()]);
-                    word_node.add_node(nodes);
+            if is_valid_structure(&word_entry) {
+                let all_segmentations = generate_all_segmentations(word_entry.as_str(), vec![]);
+                for segmentation in all_segmentations {
+                    for case_clitic in case_clitics.iter() {
+                        let nodes = MorphemeNode::from_words(vec![
+                            segmentation.clone(),
+                            case_clitic.clone(),
+                        ]);
+                        word_node.add_node(nodes);
+                    }
                 }
             }
         }
@@ -178,6 +183,21 @@ impl Lattice {
     /// Serialize a `Lattice` into a JSON string.
     pub fn to_json_string(&self) -> Result<String, serde_json::Error> {
         serde_json::to_string(&self)
+    }
+
+    /// Convert to Manchu letters.
+    pub fn to_manchu_letters(&mut self) {
+        self.sentence = self
+            .sentence
+            .convert_to_manchu()
+            .expect("cannot convert to manchu");
+        for word_node in self.lattice.iter_mut() {
+            for morpheme_node in word_node.0.iter_mut() {
+                for word in morpheme_node.words.iter_mut() {
+                    word.to_manchu_letters();
+                }
+            }
+        }
     }
 
     /// Calculate the minimum cost path from the beginning to the end of the lattice.
