@@ -1,5 +1,4 @@
 import json
-import sys
 
 
 def remove_path_cost_and_left_category(input_json: str) -> str:

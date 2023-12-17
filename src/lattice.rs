@@ -6,7 +6,7 @@ use serde::Serialize;
 use crate::{
     edge_cost::get_edge_cost_map,
     function_word::FunctionWord,
-    phoneme::is_unusual_final_consonant,
+    phoneme::{is_unusual_final_consonant, is_valid_structure},
     split_clitic::split_word_into_word_clitic,
     split_suffix::generate_all_segmentations,
     word::{Detail, PartOfSpeech, Word},
@@ -120,12 +120,16 @@ impl WordNode {
 
         // if the token includes a clitic, the clitic is indexed as a word
         if let Ok((word_entry, case_clitics)) = split_word_into_word_clitic(token) {
-            let all_segmentations = generate_all_segmentations(word_entry.as_str(), vec![]);
-            for segmentation in all_segmentations {
-                for case_clitic in case_clitics.iter() {
-                    let nodes =
-                        MorphemeNode::from_words(vec![segmentation.clone(), case_clitic.clone()]);
-                    word_node.add_node(nodes);
+            if is_valid_structure(&word_entry) {
+                let all_segmentations = generate_all_segmentations(word_entry.as_str(), vec![]);
+                for segmentation in all_segmentations {
+                    for case_clitic in case_clitics.iter() {
+                        let nodes = MorphemeNode::from_words(vec![
+                            segmentation.clone(),
+                            case_clitic.clone(),
+                        ]);
+                        word_node.add_node(nodes);
+                    }
                 }
             }
         }
