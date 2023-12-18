@@ -38,6 +38,7 @@ pub enum Conjugation {
     DenominalAdjective,
     PassiveCausativeVerbal,
     Plural,
+    Interrogative,
 }
 
 #[derive(Clone, Debug, Display, EnumString, PartialEq, Serialize, Deserialize)]
@@ -66,6 +67,10 @@ pub enum PartOfSpeech {
     Noun,
     Verb,
     Clitic,
+    Postposition,
+    Auxiliary,
+    Conjunction,
+    Particle,
     Unknown,
 }
 

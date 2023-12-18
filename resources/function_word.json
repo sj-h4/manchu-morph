@@ -44,5 +44,629 @@
 		"details": [
 			"prolative"
 		]
+	},
+	{
+		"entry": "akū",
+		"part_of_speech": "verb",
+		"details": [
+			"negative"
+		]
+	},
+	{
+		"entry": "amala",
+		"part_of_speech": "postposition",
+		"details": [
+			"temporal",
+			"locative"
+		]
+	},
+	{
+		"entry": "amasi",
+		"part_of_speech": "postposition",
+		"details": [
+			"temporal"
+		]
+	},
+	{
+		"entry": "andande",
+		"part_of_speech": "postposition",
+		"details": [
+			"temporal"
+		]
+	},
+	{
+		"entry": "de",
+		"part_of_speech": "postposition",
+		"details": [
+			"temporal"
+		]
+	},
+	{
+		"entry": "ebsi",
+		"part_of_speech": "postposition",
+		"details": [
+			"temporal"
+		]
+	},
+	{
+		"entry": "fonde",
+		"part_of_speech": "postposition",
+		"details": [
+			"temporal"
+		]
+	},
+	{
+		"entry": "jaka",
+		"part_of_speech": "postposition",
+		"details": [
+			"temporal"
+		]
+	},
+	{
+		"entry": "julesiken",
+		"part_of_speech": "postposition",
+		"details": [
+			"temporal"
+		]
+	},
+	{
+		"entry": "manggi",
+		"part_of_speech": "postposition",
+		"details": [
+			"temporal"
+		]
+	},
+	{
+		"entry": "namašan",
+		"part_of_speech": "postposition",
+		"details": [
+			"temporal"
+		]
+	},
+	{
+		"entry": "onggolo",
+		"part_of_speech": "postposition",
+		"details": [
+			"temporal"
+		]
+	},
+	{
+		"entry": "saka",
+		"part_of_speech": "postposition",
+		"details": [
+			"temporal"
+		]
+	},
+	{
+		"entry": "sidende",
+		"part_of_speech": "postposition",
+		"details": [
+			"temporal"
+		]
+	},
+	{
+		"entry": "unde",
+		"part_of_speech": "postposition",
+		"details": [
+			"temporal"
+		]
+	},
+	{
+		"entry": "baru",
+		"part_of_speech": "postposition",
+		"details": [
+			"allative"
+		]
+	},
+	{
+		"entry": "butereme",
+		"part_of_speech": "postposition",
+		"details": [
+			"allative"
+		]
+	},
+	{
+		"entry": "cikirame",
+		"part_of_speech": "postposition",
+		"details": [
+			"allative"
+		]
+	},
+	{
+		"entry": "dosi",
+		"part_of_speech": "postposition",
+		"details": [
+			"allative"
+		]
+	},
+	{
+		"entry": "ergide",
+		"part_of_speech": "postposition",
+		"details": [
+			"allative"
+		]
+	},
+	{
+		"entry": "fusihūn",
+		"part_of_speech": "postposition",
+		"details": [
+			"allative"
+		]
+	},
+	{
+		"entry": "haiharame",
+		"part_of_speech": "postposition",
+		"details": [
+			"allative"
+		]
+	},
+	{
+		"entry": "ici",
+		"part_of_speech": "postposition",
+		"details": [
+			"allative"
+		]
+	},
+	{
+		"entry": "ishun",
+		"part_of_speech": "postposition",
+		"details": [
+			"allative"
+		]
+	},
+	{
+		"entry": "teisu",
+		"part_of_speech": "postposition",
+		"details": [
+			"allative"
+		]
+	},
+	{
+		"entry": "unduri",
+		"part_of_speech": "postposition",
+		"details": [
+			"allative"
+		]
+	},
+	{
+		"entry": "wasihūn",
+		"part_of_speech": "postposition",
+		"details": [
+			"allative"
+		]
+	},
+	{
+		"entry": "wesihun",
+		"part_of_speech": "postposition",
+		"details": [
+			"allative"
+		]
+	},
+	{
+		"entry": "andala",
+		"part_of_speech": "postposition",
+		"details": [
+			"locative"
+		]
+	},
+	{
+		"entry": "cala",
+		"part_of_speech": "postposition",
+		"details": [
+			"locative"
+		]
+	},
+	{
+		"entry": "cargi",
+		"part_of_speech": "postposition",
+		"details": [
+			"locative"
+		]
+	},
+	{
+		"entry": "dele",
+		"part_of_speech": "postposition",
+		"details": [
+			"locative"
+		]
+	},
+	{
+		"entry": "dolo",
+		"part_of_speech": "postposition",
+		"details": [
+			"locative"
+		]
+	},
+	{
+		"entry": "aname",
+		"part_of_speech": "postposition",
+		"details": [
+			"terminal"
+		]
+	},
+	{
+		"entry": "canggi",
+		"part_of_speech": "postposition",
+		"details": [
+			"terminal"
+		]
+	},
+	{
+		"entry": "ebsihe",
+		"part_of_speech": "postposition",
+		"details": [
+			"terminal"
+		]
+	},
+	{
+		"entry": "noho",
+		"part_of_speech": "postposition",
+		"details": [
+			"terminal"
+		]
+	},
+	{
+		"entry": "teile",
+		"part_of_speech": "postposition",
+		"details": [
+			"terminal"
+		]
+	},
+	{
+		"entry": "tulgiyen",
+		"part_of_speech": "postposition",
+		"details": [
+			"terminal"
+		]
+	},
+	{
+		"entry": "emde",
+		"part_of_speech": "postposition",
+		"details": [
+			"cooperative"
+		]
+	},
+	{
+		"entry": "emgi",
+		"part_of_speech": "postposition",
+		"details": [
+			"cooperative"
+		]
+	},
+	{
+		"entry": "ici",
+		"part_of_speech": "postposition",
+		"details": [
+			"cooperative"
+		]
+	},
+	{
+		"entry": "nisihai",
+		"part_of_speech": "postposition",
+		"details": [
+			"cooperative"
+		]
+	},
+	{
+		"entry": "sasa",
+		"part_of_speech": "postposition",
+		"details": [
+			"cooperative"
+		]
+	},
+	{
+		"entry": "dahame",
+		"part_of_speech": "postposition",
+		"details": [
+			"causal"
+		]
+	},
+	{
+		"entry": "haran",
+		"part_of_speech": "postposition",
+		"details": [
+			"causal"
+		]
+	},
+	{
+		"entry": "jakade",
+		"part_of_speech": "postposition",
+		"details": [
+			"causal"
+		]
+	},
+	{
+		"entry": "jalin",
+		"part_of_speech": "postposition",
+		"details": [
+			"causal"
+		]
+	},
+	{
+		"entry": "turgunde",
+		"part_of_speech": "postposition",
+		"details": [
+			"causal"
+		]
+	},
+	{
+		"entry": "funde",
+		"part_of_speech": "postposition",
+		"details": [
+			"alternative"
+		]
+	},
+	{
+		"entry": "adali",
+		"part_of_speech": "postposition",
+		"details": [
+			"alternative"
+		]
+	},
+	{
+		"entry": "gese",
+		"part_of_speech": "postposition",
+		"details": [
+			"alternative"
+		]
+	},
+	{
+		"entry": "songkoi",
+		"part_of_speech": "postposition",
+		"details": [
+			"alternative"
+		]
+	},
+	{
+		"entry": "manggi",
+		"part_of_speech": "postposition",
+		"details": [
+			"conditional"
+		]
+	},
+	{
+		"entry": "nakū",
+		"part_of_speech": "postposition",
+		"details": [
+			"conditional"
+		]
+	},
+	{
+		"entry": "tetendere",
+		"part_of_speech": "postposition",
+		"details": [
+			"conditional"
+		]
+	},
+	{
+		"entry": "amuran",
+		"part_of_speech": "postposition",
+		"details": [
+			"voluntative"
+		]
+	},
+	{
+		"entry": "guwelke",
+		"part_of_speech": "postposition",
+		"details": [
+			"voluntative"
+		]
+	},
+	{
+		"entry": "cihai",
+		"part_of_speech": "postposition",
+		"details": [
+			"voluntative"
+		]
+	},
+	{
+		"entry": "ede",
+		"part_of_speech": "conjunction",
+		"details": [
+			"copulative"
+		]
+	},
+	{
+		"entry": "jai",
+		"part_of_speech": "conjunction",
+		"details": [
+			"copulative"
+		]
+	},
+	{
+		"entry": "jakade",
+		"part_of_speech": "conjunction",
+		"details": [
+			"copulative"
+		]
+	},
+	{
+		"entry": "ofi",
+		"part_of_speech": "conjunction",
+		"details": [
+			"copulative"
+		]
+	},
+	{
+		"entry": "ohode",
+		"part_of_speech": "conjunction",
+		"details": [
+			"copulative"
+		]
+	},
+	{
+		"entry": "seme",
+		"part_of_speech": "conjunction",
+		"details": [
+			"copulative"
+		]
+	},
+	{
+		"entry": "sirame",
+		"part_of_speech": "conjunction",
+		"details": [
+			"copulative"
+		]
+	},
+	{
+		"entry": "tereci",
+		"part_of_speech": "conjunction",
+		"details": [
+			"copulative"
+		]
+	},
+	{
+		"entry": "tuttu",
+		"part_of_speech": "conjunction",
+		"details": [
+			"copulative"
+		]
+	},
+	{
+		"entry": "bime",
+		"part_of_speech": "conjunction",
+		"details": [
+			"adversative"
+		]
+	},
+	{
+		"entry": "damu",
+		"part_of_speech": "conjunction",
+		"details": [
+			"adversative"
+		]
+	},
+	{
+		"entry": "elemangga",
+		"part_of_speech": "conjunction",
+		"details": [
+			"adversative"
+		]
+	},
+	{
+		"entry": "gojime",
+		"part_of_speech": "conjunction",
+		"details": [
+			"adversative"
+		]
+	},
+	{
+		"entry": "nememe",
+		"part_of_speech": "conjunction",
+		"details": [
+			"adversative"
+		]
+	},
+	{
+		"entry": "eici",
+		"part_of_speech": "conjunction",
+		"details": [
+			"selective"
+		]
+	},
+	{
+		"entry": "embici",
+		"part_of_speech": "conjunction",
+		"details": [
+			"selective"
+		]
+	},
+	{
+		"entry": "ocibe",
+		"part_of_speech": "conjunction",
+		"details": [
+			"selective"
+		]
+	},
+	{
+		"entry": "akūn",
+		"part_of_speech": "particle",
+		"details": [
+			"interrogative"
+		]
+	},
+	{
+		"entry": "na",
+		"part_of_speech": "particle",
+		"details": [
+			"interrogative"
+		]
+	},
+	{
+		"entry": "ne",
+		"part_of_speech": "particle",
+		"details": [
+			"interrogative"
+		]
+	},
+	{
+		"entry": "ni",
+		"part_of_speech": "particle",
+		"details": [
+			"interrogative"
+		]
+	},
+	{
+		"entry": "nio",
+		"part_of_speech": "particle",
+		"details": [
+			"interrogative"
+		]
+	},
+	{
+		"entry": "nu",
+		"part_of_speech": "particle",
+		"details": [
+			"interrogative"
+		]
+	},
+	{
+		"entry": "ayoo",
+		"part_of_speech": "particle",
+		"details": [
+			"conjectural"
+		]
+	},
+	{
+		"entry": "dere",
+		"part_of_speech": "particle",
+		"details": [
+			"conjectural"
+		]
+	},
+	{
+		"entry": "bai",
+		"part_of_speech": "particle",
+		"details": [
+			"assertive"
+		]
+	},
+	{
+		"entry": "be",
+		"part_of_speech": "particle",
+		"details": [
+			"assertive"
+		]
+	},
+	{
+		"entry": "dabala",
+		"part_of_speech": "particle",
+		"details": [
+			"assertive"
+		]
+	},
+	{
+		"entry": "dere",
+		"part_of_speech": "particle",
+		"details": [
+			"assertive"
+		]
+	},
+	{
+		"entry": "kai",
+		"part_of_speech": "particle",
+		"details": [
+			"assertive"
+		]
 	}
 ]
