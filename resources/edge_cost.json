@@ -13,5 +13,25 @@
     "left_category": "genitive",
     "right_category": "noun",
     "cost": -5
+  },
+  {
+    "left_category": "passive_causative_verbal",
+    "right_category": "accusative",
+    "cost": 5
+  },
+  {
+    "left_category": "passive_causative_verbal",
+    "right_category": "nominative",
+    "cost": 5
+  },
+  {
+    "left_category": "passive_causative_verbal",
+    "right_category": "genitive",
+    "cost": 5
+  },
+  {
+    "left_category": "passive_causative_verbal",
+    "right_category": "noun",
+    "cost": 5
   }
 ]

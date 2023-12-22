@@ -128,7 +128,7 @@ impl Word {
             suffixes: suffixes.clone(),
             part_of_speech,
             detail,
-            emission_cost: -5 * suffixes.clone().unwrap_or(vec![]).len() as isize,
+            emission_cost: -1 * suffixes.clone().unwrap_or(vec![]).len() as isize,
         }
     }
 
