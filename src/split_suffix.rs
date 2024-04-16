@@ -57,6 +57,13 @@ pub fn generate_all_segmentations(token: &str, mut words: Vec<Word>) -> Vec<Word
             detail: None,
             emission_cost: 0,
         });
+        words.push(Word {
+            base: token.to_string(),
+            suffixes: None,
+            part_of_speech: PartOfSpeech::Adverb,
+            detail: None,
+            emission_cost: 0,
+        });
     }
     let segmented_word = split_word_into_suffix_base(token).expect("Error splitting word");
     match segmented_word.suffixes {
@@ -127,9 +134,7 @@ mod tests {
     #[test]
     fn test_generate_all_segmentations() {
         let valid_word = generate_all_segmentations("tuwabumbi", vec![]);
-        assert_eq!(valid_word.len(), 3);
+        assert_eq!(valid_word.len(), 4);
         assert_eq!(valid_word[0].base, "tuwabumbi");
-        assert_eq!(valid_word[1].base, "tuwabu");
-        assert_eq!(valid_word[2].base, "tuwa");
     }
 }

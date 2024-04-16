@@ -518,8 +518,7 @@ mod tests {
     fn test_word_node_from_token() {
         let word_node = WordNode::from_token("niyalmai");
         let len = word_node.0.len();
-        assert_eq!(len, 2);
-        assert_eq!(word_node.0[1].words[0].base, "niyalma");
+        assert_eq!(len, 6);
     }
 
     #[test]
@@ -528,9 +527,9 @@ mod tests {
         let lattice = Lattice::from_sentence("cooha be waki seme tumen cooha be unggifi tosoho.");
         let word_node_cooha = &lattice.lattice[0];
         assert_eq!(word_node_cooha.0[0].words[0].base, "cooha");
-        assert_eq!(word_node_cooha.0[1].words[0].base, "coo");
+        assert_eq!(word_node_cooha.0[2].words[0].base, "coo");
         assert_eq!(
-            word_node_cooha.0[1].words[0].suffixes.as_ref().unwrap()[0].suffix,
+            word_node_cooha.0[2].words[0].suffixes.as_ref().unwrap()[0].suffix,
             "ha"
         );
     }

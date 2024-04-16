@@ -66,6 +66,7 @@ pub enum Detail {
 pub enum PartOfSpeech {
     Noun,
     Verb,
+    Adverb,
     Clitic,
     Postposition,
     Auxiliary,
