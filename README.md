@@ -1,11 +1,12 @@
 # Manchu morphological analyzer
 
-README is written in Japanese.
+> [!CAUTION] > `Lattice::get_min_cost_path` doesn't work
 
-> [!CAUTION]
-> `Lattice::get_min_cost_path` は機能しません。
+> [!NOTE]
+> This is a work in progress.
+> This tool create a lattice from a sentence and outputs a JSON string.
 
-## 使い方
+## Usage
 
 ```toml
 [dependencies]
@@ -18,14 +19,14 @@ use manchu_morph::lattice::Lattice;
 fn main() {
     let sentence = "manju gisun i bithe"
 
-    // 分割・グロスの候補の作成
+    // Split the sentence into morphemes and create a lattice
     let lattice = Lattice::from_sentence(sentence);
 
-    // 満洲文字に変換する場合
+    // If you want to see the lattice in Manchu letters:
     //let mut lattice = Lattice::from_sentence(sentence);
     //lattice.to_manchu_letters();
 
-    // JSON への変換
+    // Convert the lattice to a JSON string
     let lattice_json = lattice.to_json_string().unwrap();
 }
 ```

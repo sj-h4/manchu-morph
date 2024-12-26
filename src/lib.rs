@@ -1,7 +1,7 @@
 mod edge_cost;
 pub mod function_word;
 pub mod lattice;
-mod phoneme;
-mod split_clitic;
-mod split_suffix;
+pub mod phoneme;
+pub mod split_clitic;
+pub mod split_suffix;
 pub mod word;
