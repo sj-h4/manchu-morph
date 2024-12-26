@@ -1,8 +1,10 @@
 # Manchu morphological analyzer
 
-> [!CAUTION] > `Lattice::get_min_cost_path` doesn't work
-> [!NOTE]
+> [!CAUTION]
 > This is a work in progress.
+> `Lattice::get_min_cost_path` doesn't work.
+
+> [!NOTE]
 > This tool create a lattice from a sentence and outputs a JSON string.
 
 ## Usage
